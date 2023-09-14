@@ -1,7 +1,7 @@
 {
   "name": "Aircall Tashi Demo",
   "description": "When there is a trigger on a specified schedule, do action",
-  "version": 3,
+  "version": 4,
   "private": true,
   "concurrency": 1,
   "code": {
@@ -1737,7 +1737,7 @@
         "uuid": "b0edfdf4-bdbf-4ea3-9f05-3d13a4bf66b6"
       }
     ],
-    "comment": "Assaf is not amazing",
+    "comment": "JP is the brain trust",
     "uuid": "2e784a88-eb3f-4bb2-8a30-c9fe46cdc62e",
     "unfinished": false
   },
