@@ -1,0 +1,10 @@
+{
+  "name": "My Akeneo 3rd account",
+  "provider": {
+    "zip_name": "akeneo_oauth.custom_adapter.json",
+    "name": "Akeneo OAuth",
+    "folder": ""
+  },
+  "secure_gateway_tunnel_name": null,
+  "root_folder": true
+}

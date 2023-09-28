@@ -1,0 +1,429 @@
+{
+  "name": "Retry",
+  "description": "When there is a trigger event, do action",
+  "version": 3,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "clock",
+    "name": "scheduled_event",
+    "as": "a0f646a9",
+    "title": null,
+    "description": "<span class=\"provider\">Trigger</span> every 5 days at <span class=\"provider\">01:00:00 AM</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+      "time_unit": "Days"
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "time_unit": "days",
+      "trigger_every": "5",
+      "trigger_at": "01:00:00"
+    },
+    "extended_input_schema": [
+      {
+        "control_type": "integer",
+        "default": "5",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Define repeating schedule. Enter whole numbers only.\n                        This field can be set to a minimum of 5 minutes.",
+        "label": "Trigger every",
+        "name": "trigger_every",
+        "optional": false,
+        "suffix": {
+          "text": "days"
+        },
+        "type": "string"
+      },
+      {
+        "control_type": "time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set a time to schedule the job.",
+        "label": "Trigger at",
+        "name": "trigger_at",
+        "optional": false,
+        "type": "string"
+      },
+      {
+        "control_type": "date_time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set date and time to start or leave blank to start immediately. <b>Once recipe has been run or tested, value cannot be changed.</b>",
+        "label": "Start after",
+        "name": "start_after",
+        "optional": true,
+        "parse_output": "date_time_conversion",
+        "since_field": true,
+        "type": "date_time",
+        "render_input": "date_time_conversion"
+      },
+      {
+        "control_type": "select",
+        "hint": "Select the timezone to use. Leave it blank to use <b>(GMT-08:00) Pacific Time (US & Canada)</b>",
+        "label": "Timezone",
+        "name": "timezone",
+        "optional": true,
+        "pick_list": "timezone_id_global_pick_list",
+        "pick_list_connection_less": true,
+        "type": "string"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "zoom",
+        "name": "search_object",
+        "as": "30d94a86",
+        "title": null,
+        "description": "Search <span class=\"provider\">cloud recordings</span> in <span class=\"provider\">Zoom</span>",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+          "object": "Cloud recording"
+        },
+        "toggleCfg": {
+          "trash_type": false
+        },
+        "input": {
+          "object": "cloud recording",
+          "trash_type": "meeting_recordings",
+          "userId": "me"
+        },
+        "extended_output_schema": [
+          {
+            "label": "Meetings",
+            "name": "response",
+            "of": "object",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Uuid",
+                "optional": true,
+                "type": "string",
+                "name": "uuid"
+              },
+              {
+                "control_type": "text",
+                "label": "ID",
+                "optional": true,
+                "type": "string",
+                "name": "id"
+              },
+              {
+                "control_type": "text",
+                "label": "Account ID",
+                "optional": true,
+                "type": "string",
+                "name": "account_id"
+              },
+              {
+                "control_type": "text",
+                "label": "Host ID",
+                "optional": true,
+                "type": "string",
+                "name": "host_id"
+              },
+              {
+                "control_type": "text",
+                "label": "Topic",
+                "optional": true,
+                "type": "string",
+                "name": "topic"
+              },
+              {
+                "control_type": "text",
+                "label": "Start time",
+                "optional": true,
+                "type": "string",
+                "name": "start_time"
+              },
+              {
+                "control_type": "integer",
+                "label": "Duration",
+                "parse_output": "integer_conversion",
+                "optional": true,
+                "type": "integer",
+                "name": "duration"
+              },
+              {
+                "control_type": "integer",
+                "label": "Type",
+                "parse_output": "integer_conversion",
+                "optional": true,
+                "type": "integer",
+                "name": "type"
+              },
+              {
+                "control_type": "text",
+                "label": "Timezone",
+                "optional": true,
+                "type": "string",
+                "name": "timezone"
+              },
+              {
+                "control_type": "text",
+                "label": "Share URL",
+                "optional": true,
+                "type": "string",
+                "name": "share_url"
+              },
+              {
+                "control_type": "text",
+                "label": "Total size",
+                "optional": true,
+                "type": "string",
+                "name": "total_size"
+              },
+              {
+                "control_type": "text",
+                "label": "Recording count",
+                "optional": true,
+                "type": "string",
+                "name": "recording_count"
+              },
+              {
+                "name": "recording_files",
+                "type": "array",
+                "of": "object",
+                "label": "Recording files",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Meeting ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "meeting_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Recording start",
+                    "optional": true,
+                    "type": "string",
+                    "name": "recording_start"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Recording end",
+                    "optional": true,
+                    "type": "string",
+                    "name": "recording_end"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "File type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "file_type"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "File size",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "file_size"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Play URL",
+                    "optional": true,
+                    "type": "string",
+                    "name": "play_url"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Download URL",
+                    "optional": true,
+                    "type": "string",
+                    "name": "download_url"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "status"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Deleted time",
+                    "optional": true,
+                    "type": "string",
+                    "name": "deleted_time"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Recording type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "recording_type"
+                  }
+                ]
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "control_type": "text",
+            "label": "From",
+            "name": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "label": "To",
+            "name": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "label": "Page count",
+            "name": "page_count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "label": "Page size",
+            "name": "page_size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "label": "Total records",
+            "name": "total_records",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "label": "Next page token",
+            "name": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "control_type": "text",
+            "hint": "Provide user ID or email ID or <b>me</b>.",
+            "label": "User ID",
+            "name": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "hint": "Query metadata of recording. Default: <b>false</b>.",
+            "label": "Mc",
+            "name": "mc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "hint": "Possible values are: <b>true, false</b>. Default: <b>false</b>.",
+            "label": "Trash",
+            "name": "trash",
+            "optional": true,
+            "toggle_field": {
+              "name": "trash",
+              "label": "Trash",
+              "optional": true,
+              "hint": "Query trash",
+              "type": "boolean",
+              "control_type": "checkbox",
+              "toggle_hint": "Select from list"
+            },
+            "toggle_hint": "Enter value",
+            "type": "string"
+          },
+          {
+            "control_type": "date",
+            "hint": "Start date (Within 6 month range).",
+            "label": "From",
+            "name": "from",
+            "optional": true,
+            "parse_output": "date_conversion",
+            "type": "date_time",
+            "render_input": "date_conversion"
+          },
+          {
+            "control_type": "date",
+            "hint": "End date (Within 6 month range).",
+            "label": "To",
+            "name": "to",
+            "optional": true,
+            "parse_output": "date_conversion",
+            "type": "date_time",
+            "render_input": "date_conversion"
+          },
+          {
+            "control_type": "text",
+            "default": "meeting_recordings",
+            "hint": "Possible values are: <b>meeting_recordings, recording_file</b>. Default: <b>meeting_recordings</b>.",
+            "label": "Trash type",
+            "name": "trash_type",
+            "optional": true,
+            "toggle_field": {
+              "name": "trash_type",
+              "label": "Trash type",
+              "optional": true,
+              "type": "string",
+              "default": "meeting_recordings",
+              "control_type": "select",
+              "pick_list": "trash_types",
+              "toggle_hint": "Select trash type"
+            },
+            "toggle_hint": "Enter trash type",
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "hint": "Returns whenever the set of available results exceeds current page size. Expiration period for this token is <b>15 minutes</b>.",
+            "label": "Next page token",
+            "name": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ],
+        "uuid": "680d4e6c-d8d7-4a1d-8814-a9831bddfe26"
+      }
+    ],
+    "comment": "Build a recipe to monitor/ manage other recipes, jobs, or this account",
+    "uuid": "35683265-af2c-40bf-a75c-fc4e5958669e",
+    "unfinished": false
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "clock",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "zoom",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "Demo/my_second_zoom_account.connection.json",
+        "name": "My second Zoom account",
+        "folder": "Demo"
+      }
+    }
+  ]
+}
