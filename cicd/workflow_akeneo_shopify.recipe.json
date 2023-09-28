@@ -1,0 +1,1068 @@
+{
+  "name": "Workflow Akeneo Shopify",
+  "description": "When there is a trigger event, do action",
+  "version": 10,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "clock",
+    "name": "scheduled_event",
+    "as": "25a381e3",
+    "title": null,
+    "description": "<span class=\"provider\">Trigger</span> on a <span class=\"provider\">specified schedule</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "time_unit": "minutes",
+      "trigger_every": "5"
+    },
+    "extended_input_schema": [
+      {
+        "control_type": "integer",
+        "default": "5",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Define repeating schedule. Enter whole numbers only.\n                        This field can be set to a minimum of 5 minutes.",
+        "label": "Trigger every",
+        "name": "trigger_every",
+        "optional": false,
+        "suffix": {
+          "text": "minutes"
+        },
+        "type": "string"
+      },
+      {
+        "control_type": "date_time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set date and time to start or leave blank to start immediately. <b>Once recipe has been run or tested, value cannot be changed.</b>",
+        "label": "Start after",
+        "name": "start_after",
+        "optional": true,
+        "parse_output": "date_time_conversion",
+        "since_field": true,
+        "type": "date_time",
+        "render_input": "date_time_conversion"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "keyword": "try",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+        },
+        "block": [
+          {
+            "number": 2,
+            "provider": "akeneo_3rd_connector_374775_1690198220",
+            "name": "get_all_products",
+            "as": "402fbbdb",
+            "mask_data": false,
+            "title": null,
+            "description": null,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+            },
+            "extended_output_schema": [
+              {
+                "label": "Links",
+                "name": "_links",
+                "optional": true,
+                "properties": [
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Href",
+                        "optional": true,
+                        "type": "string",
+                        "name": "href"
+                      }
+                    ],
+                    "label": "Self",
+                    "optional": true,
+                    "type": "object",
+                    "name": "self"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Href",
+                        "optional": true,
+                        "type": "string",
+                        "name": "href"
+                      }
+                    ],
+                    "label": "First",
+                    "optional": true,
+                    "type": "object",
+                    "name": "first"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Href",
+                        "optional": true,
+                        "type": "string",
+                        "name": "href"
+                      }
+                    ],
+                    "label": "Previous",
+                    "optional": true,
+                    "type": "object",
+                    "name": "previous"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Href",
+                        "optional": true,
+                        "type": "string",
+                        "name": "href"
+                      }
+                    ],
+                    "label": "Next",
+                    "optional": true,
+                    "type": "object",
+                    "name": "next"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "control_type": "number",
+                "label": "Current page",
+                "name": "current_page",
+                "optional": true,
+                "parse_output": "float_conversion",
+                "type": "number"
+              },
+              {
+                "label": "Embedded",
+                "name": "_embedded",
+                "optional": true,
+                "properties": [
+                  {
+                    "name": "items",
+                    "type": "array",
+                    "of": "object",
+                    "label": "Items",
+                    "optional": true,
+                    "properties": [
+                      {
+                        "properties": [
+                          {
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Href",
+                                "optional": true,
+                                "type": "string",
+                                "name": "href"
+                              }
+                            ],
+                            "label": "Self",
+                            "optional": true,
+                            "type": "object",
+                            "name": "self"
+                          }
+                        ],
+                        "label": "Links",
+                        "optional": true,
+                        "type": "object",
+                        "name": "_links"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Uuid",
+                        "optional": true,
+                        "type": "string",
+                        "name": "uuid"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Identifier",
+                        "optional": true,
+                        "type": "string",
+                        "name": "identifier"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Family",
+                        "optional": true,
+                        "type": "string",
+                        "name": "family"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Parent",
+                        "optional": true,
+                        "type": "string",
+                        "name": "parent"
+                      },
+                      {
+                        "name": "categories",
+                        "type": "array",
+                        "of": "string",
+                        "control_type": "text",
+                        "label": "Categories",
+                        "optional": true
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Enabled",
+                        "parse_output": {
+                        },
+                        "render_input": {
+                        },
+                        "toggle_hint": "Select from option list",
+                        "toggle_field": {
+                          "label": "Enabled",
+                          "control_type": "text",
+                          "toggle_hint": "Use custom value",
+                          "type": "boolean",
+                          "name": "enabled"
+                        },
+                        "optional": true,
+                        "type": "number",
+                        "name": "enabled"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "name": "name",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Name",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Data",
+                                "optional": true,
+                                "type": "string",
+                                "name": "data"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "description",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Description",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Data",
+                                "optional": true,
+                                "type": "string",
+                                "name": "data"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "price",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Price",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              },
+                              {
+                                "name": "data",
+                                "type": "array",
+                                "of": "object",
+                                "label": "Data",
+                                "optional": true,
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Amount",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "amount"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Currency",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "currency"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "name": "color",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Color",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Data",
+                                "optional": true,
+                                "type": "string",
+                                "name": "data"
+                              },
+                              {
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Attribute",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "attribute"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Code",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "code"
+                                  },
+                                  {
+                                    "properties": [
+                                      {
+                                        "control_type": "text",
+                                        "label": "En US",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "en_US"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Fr FR",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "fr_FR"
+                                      }
+                                    ],
+                                    "label": "Labels",
+                                    "optional": true,
+                                    "type": "object",
+                                    "name": "labels"
+                                  }
+                                ],
+                                "label": "Linked data",
+                                "optional": true,
+                                "type": "object",
+                                "name": "linked_data"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "size",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Size",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Data",
+                                "optional": true,
+                                "type": "string",
+                                "name": "data"
+                              },
+                              {
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Attribute",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "attribute"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "Code",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "code"
+                                  },
+                                  {
+                                    "properties": [
+                                      {
+                                        "control_type": "text",
+                                        "label": "En US",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "en_US"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Fr FR",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "fr_FR"
+                                      }
+                                    ],
+                                    "label": "Labels",
+                                    "optional": true,
+                                    "type": "object",
+                                    "name": "labels"
+                                  }
+                                ],
+                                "label": "Linked data",
+                                "optional": true,
+                                "type": "object",
+                                "name": "linked_data"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "collection",
+                            "type": "array",
+                            "of": "object",
+                            "label": "Collection",
+                            "optional": true,
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Locale",
+                                "optional": true,
+                                "type": "string",
+                                "name": "locale"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Scope",
+                                "optional": true,
+                                "type": "string",
+                                "name": "scope"
+                              },
+                              {
+                                "name": "data",
+                                "type": "array",
+                                "of": "string",
+                                "control_type": "text",
+                                "label": "Data",
+                                "optional": true
+                              },
+                              {
+                                "properties": [
+                                  {
+                                    "properties": [
+                                      {
+                                        "control_type": "text",
+                                        "label": "Attribute",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "attribute"
+                                      },
+                                      {
+                                        "control_type": "text",
+                                        "label": "Code",
+                                        "optional": true,
+                                        "type": "string",
+                                        "name": "code"
+                                      },
+                                      {
+                                        "properties": [
+                                          {
+                                            "control_type": "text",
+                                            "label": "En US",
+                                            "optional": true,
+                                            "type": "string",
+                                            "name": "en_US"
+                                          },
+                                          {
+                                            "control_type": "text",
+                                            "label": "Fr FR",
+                                            "optional": true,
+                                            "type": "string",
+                                            "name": "fr_FR"
+                                          }
+                                        ],
+                                        "label": "Labels",
+                                        "optional": true,
+                                        "type": "object",
+                                        "name": "labels"
+                                      }
+                                    ],
+                                    "label": "Winter 2016",
+                                    "optional": true,
+                                    "type": "object",
+                                    "name": "winter_2016"
+                                  }
+                                ],
+                                "label": "Linked data",
+                                "optional": true,
+                                "type": "object",
+                                "name": "linked_data"
+                              }
+                            ]
+                          }
+                        ],
+                        "label": "Values",
+                        "optional": true,
+                        "type": "object",
+                        "name": "values"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Created",
+                        "render_input": "date_time_conversion",
+                        "parse_output": "date_time_conversion",
+                        "optional": true,
+                        "type": "date_time",
+                        "name": "created"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Updated",
+                        "render_input": "date_time_conversion",
+                        "parse_output": "date_time_conversion",
+                        "optional": true,
+                        "type": "date_time",
+                        "name": "updated"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "properties": [
+                              {
+                                "name": "products",
+                                "type": "array",
+                                "of": "string",
+                                "control_type": "text",
+                                "label": "Products",
+                                "optional": true
+                              }
+                            ],
+                            "label": "PACK",
+                            "optional": true,
+                            "type": "object",
+                            "name": "PACK"
+                          }
+                        ],
+                        "label": "Associations",
+                        "optional": true,
+                        "type": "object",
+                        "name": "associations"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "properties": [
+                              {
+                                "name": "products",
+                                "type": "array",
+                                "of": "object",
+                                "label": "Products",
+                                "optional": true,
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Identifier",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "identifier"
+                                  },
+                                  {
+                                    "control_type": "number",
+                                    "label": "Quantity",
+                                    "parse_output": "float_conversion",
+                                    "optional": true,
+                                    "type": "number",
+                                    "name": "quantity"
+                                  }
+                                ]
+                              },
+                              {
+                                "name": "product_models",
+                                "type": "array",
+                                "of": "object",
+                                "label": "Product models",
+                                "optional": true,
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "Identifier",
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "identifier"
+                                  },
+                                  {
+                                    "control_type": "number",
+                                    "label": "Quantity",
+                                    "parse_output": "float_conversion",
+                                    "optional": true,
+                                    "type": "number",
+                                    "name": "quantity"
+                                  }
+                                ]
+                              }
+                            ],
+                            "label": "PRODUCT SET",
+                            "optional": true,
+                            "type": "object",
+                            "name": "PRODUCT_SET"
+                          }
+                        ],
+                        "label": "Quantified associations",
+                        "optional": true,
+                        "type": "object",
+                        "name": "quantified_associations"
+                      },
+                      {
+                        "name": "quality_scores",
+                        "type": "array",
+                        "of": "object",
+                        "label": "Quality scores",
+                        "optional": true,
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Scope",
+                            "optional": true,
+                            "type": "string",
+                            "name": "scope"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Locale",
+                            "optional": true,
+                            "type": "string",
+                            "name": "locale"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Data",
+                            "optional": true,
+                            "type": "string",
+                            "name": "data"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "completenesses",
+                        "type": "array",
+                        "of": "object",
+                        "label": "Completenesses",
+                        "optional": true,
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Scope",
+                            "optional": true,
+                            "type": "string",
+                            "name": "scope"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Locale",
+                            "optional": true,
+                            "type": "string",
+                            "name": "locale"
+                          },
+                          {
+                            "control_type": "number",
+                            "label": "Data",
+                            "parse_output": "float_conversion",
+                            "optional": true,
+                            "type": "number",
+                            "name": "data"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "type": "object"
+              }
+            ],
+            "uuid": "4a5eb4e5-443c-440e-8f82-9d1601f1b15f"
+          },
+          {
+            "number": 3,
+            "provider": "akeneo_3rd_connector_374775_1690198220",
+            "name": "create_product",
+            "as": "1fab20ce",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "identifier": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.identifier')}"
+            },
+            "visible_config_fields": [
+              "identifier",
+              "enabled",
+              "family",
+              "categories",
+              "parent",
+              "values.name.data",
+              "values.name.locale",
+              "values.name.scope",
+              "values.description.data",
+              "values.description.locale",
+              "values.description.scope",
+              "values.price.locale",
+              "values.price.scope",
+              "values.price.data.amount",
+              "values.price.data.currency",
+              "values.color.locale",
+              "values.color.scope",
+              "values.color.data",
+              "values.color.linked_data.attribute",
+              "values.color.linked_data.code",
+              "values.color.linked_data.labels.en_US",
+              "values.color.linked_data.labels.fr_FR",
+              "values.size.locale",
+              "values.size.scope",
+              "values.size.data",
+              "values.size.linked_data.attribute",
+              "values.size.linked_data.code",
+              "values.size.linked_data.labels.en_US",
+              "values.size.linked_data.labels.fr_FR",
+              "values.collection.locale",
+              "values.collection.scope",
+              "values.collection.data",
+              "values.collection.linked_data.winter_2016.attribute",
+              "values.collection.linked_data.winter_2016.code",
+              "values.collection.linked_data.winter_2016.labels.en_US",
+              "values.collection.linked_data.winter_2016.labels.fr_FR",
+              "associations.PACK.products",
+              "quantified_associations.PRODUCT_SET.products.identifier",
+              "quantified_associations.PRODUCT_SET.products.quantity",
+              "quantified_associations.PRODUCT_SET.product_models.identifier",
+              "quantified_associations.PRODUCT_SET.product_models.quantity"
+            ],
+            "uuid": "a8ce1e6e-4a75-4880-8e0e-206ddcf263d4",
+            "skip": true
+          },
+          {
+            "number": 4,
+            "as": "d7a6a4e4",
+            "keyword": "foreach",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "repeat_mode": "simple",
+            "clear_scope": "false",
+            "input": {
+            },
+            "block": [
+              {
+                "number": 5,
+                "provider": "shopify",
+                "name": "search_product",
+                "as": "f1da5180",
+                "keyword": "action",
+                "dynamicPickListSelection": {
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "title": "#{_('data.foreach.d7a6a4e4.identifier')}"
+                },
+                "uuid": "5234e7e3-0d7e-497c-aacc-3dc0fa8fabbd"
+              },
+              {
+                "number": 6,
+                "keyword": "if",
+                "dynamicPickListSelection": {
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "type": "compound",
+                  "operand": "and",
+                  "conditions": [
+                    {
+                      "operand": "equals_to",
+                      "lhs": "#{_('data.shopify.f1da5180.products.first.____Size', 'list_meta', '____Size', 'data.shopify.f1da5180.products')}",
+                      "rhs": "=0",
+                      "uuid": "condition-1a0424f3-e52e-4fb3-8c06-5c7d149af245"
+                    },
+                    {
+                      "operand": "blank",
+                      "lhs": "#{_('data.shopify.f1da5180.products.first.title')}",
+                      "rhs": "",
+                      "uuid": "condition-72feb413-9068-4dfe-84da-3fcd7749d3a6"
+                    }
+                  ]
+                },
+                "block": [
+                  {
+                    "number": 7,
+                    "provider": "shopify",
+                    "name": "create_product",
+                    "as": "1e29f11f",
+                    "keyword": "action",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                      "product_type": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.family')}#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.values.name.first.data')}#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.values.name.first.locale')}#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.values.name.first.scope')}",
+                      "title": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.identifier')}",
+                      "handle": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items')}",
+                      "published_at": "=_('data.clock.25a381e3.last_job_time').strftime(\"\")",
+                      "variants": {
+                        "price": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items.first.values.price.first.data.first.amount')}",
+                        "title": "=_('data.shopify.f1da5180.products.first.title').present? ? _('data.shopify.f1da5180.products.first.title') : \"null\""
+                      }
+                    },
+                    "visible_config_fields": [
+                      "variants.barcode",
+                      "variants.compare_at_price",
+                      "variants.grams",
+                      "variants.inventory_management",
+                      "variants.price",
+                      "variants.requires_shipping",
+                      "variants.taxable",
+                      "variants.title",
+                      "variants.weight_unit",
+                      "variants.option1",
+                      "variants.option3",
+                      "body_html",
+                      "product_type",
+                      "title",
+                      "handle",
+                      "vendor",
+                      "tags",
+                      "published_at",
+                      "variants.image_id"
+                    ],
+                    "uuid": "380e960f-f7f7-45dc-856a-f577f5bb15f2"
+                  },
+                  {
+                    "number": 8,
+                    "keyword": "else",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                    },
+                    "block": [
+                      {
+                        "number": 9,
+                        "provider": "shopify",
+                        "name": "update_product",
+                        "as": "26322a86",
+                        "keyword": "action",
+                        "dynamicPickListSelection": {
+                        },
+                        "toggleCfg": {
+                        },
+                        "input": {
+                          "id": "#{_('data.shopify.f1da5180.products.first.id')}",
+                          "title": "#{_('data.shopify.f1da5180.products.first.title')}#{_('data.foreach.d7a6a4e4.uuid')}#{_('data.foreach.d7a6a4e4.identifier')}"
+                        },
+                        "uuid": "af45ba57-82d4-465a-92de-ce601af35380"
+                      }
+                    ],
+                    "uuid": "82b69900-dcd0-413d-ad56-efdf404a3a41"
+                  }
+                ],
+                "uuid": "fb5b2e37-b49a-46f6-bfd3-de448be1d161"
+              }
+            ],
+            "source": "#{_('data.akeneo_3rd_connector_374775_1690198220.402fbbdb._embedded.items')}",
+            "uuid": "ddc55cae-b3ca-43fa-82cf-3e95aefc752a"
+          },
+          {
+            "number": 10,
+            "as": "5b9bb399",
+            "keyword": "catch",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "max_retry_count": "3",
+              "retry_interval": "10"
+            },
+            "block": [
+              {
+                "number": 11,
+                "keyword": "if",
+                "dynamicPickListSelection": {
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "type": "compound",
+                  "operand": "and",
+                  "conditions": [
+                    {
+                      "operand": "contains",
+                      "lhs": "#{_('data.catch.5b9bb399.message')}",
+                      "rhs": "rate limit hit",
+                      "uuid": "condition-0a4c796c-2fb9-4fca-9ef7-b8504dfc1d66"
+                    }
+                  ]
+                },
+                "block": [
+                  {
+                    "number": 12,
+                    "provider": "email",
+                    "name": "send_mail",
+                    "as": "2c96d8a5",
+                    "keyword": "action",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                      "email_type": "html"
+                    },
+                    "uuid": "291e72f3-c5e1-40c2-934b-ca02002b29a9"
+                  },
+                  {
+                    "number": 13,
+                    "provider": "clock",
+                    "name": "wait_for_interval",
+                    "as": "98a4a1cb",
+                    "keyword": "action",
+                    "dynamicPickListSelection": {
+                    },
+                    "toggleCfg": {
+                    },
+                    "input": {
+                      "interval": "300"
+                    },
+                    "uuid": "f5bf7d7a-d6f8-46c6-96c0-e695acac4db0"
+                  }
+                ],
+                "uuid": "57ab875a-9dc3-4f74-b67c-771f2490d626"
+              }
+            ],
+            "uuid": "e030fcfb-8dc4-4481-b45a-de81721de141"
+          }
+        ],
+        "uuid": "e0e681e4-fda4-4a66-a688-754874c7e60f"
+      }
+    ],
+    "uuid": "f305373d-5632-41ab-931c-6b71fda4b96f",
+    "unfinished": false
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "clock",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "akeneo_3rd_connector_374775_1690198220",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "my_akeneo_3rd_account.connection.json",
+        "name": "My Akeneo 3rd account",
+        "folder": "",
+        "custom": true
+      }
+    },
+    {
+      "keyword": "application",
+      "provider": "shopify",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "Customers/my_fourth_shopify_account.connection.json",
+        "name": "My fourth Shopify account",
+        "folder": "Customers"
+      }
+    },
+    {
+      "keyword": "application",
+      "provider": "email",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}
