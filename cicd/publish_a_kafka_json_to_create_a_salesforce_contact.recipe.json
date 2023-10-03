@@ -1,0 +1,1295 @@
+{
+  "name": "Publish a Kafka JSON to create a Salesforce Contact",
+  "description": "1. Triggers when a Message is received on a specific kafka topic\n2. Message is parsed according to Salesforce_contact common data model\n3. If Message contains a non-blank contact id, tries to update the existing Salesforce Contact with the same id, then posts a Slack message to warn that the Contact was updated, with the link to Salesforce Contact\n3. Else, creates a Contact from scratch in Salesforce, then sends an email to warn that the Contact was just created, with the link to Salesforce Contact\n\n",
+  "version": 16,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_pub_sub",
+    "name": "subscribe_to_topic",
+    "as": "af1acfc8",
+    "title": null,
+    "description": "New <span class=\"provider\">message</span> in <span class=\"provider\">Aveva</span> PubSub topic",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+      "topic_id": "Aveva"
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "since_offset": "-3600",
+      "topic_id": {
+        "zip_name": "aveva.topic.json",
+        "name": "Aveva",
+        "folder": ""
+      }
+    },
+    "extended_output_schema": [
+      {
+        "type": "object",
+        "name": "message",
+        "label": "Message",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Fullname",
+            "name": "fullname",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Contactid",
+            "name": "contactid",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Createddate",
+            "name": "createddate",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Email",
+            "name": "email",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Address",
+            "name": "address",
+            "type": "string",
+            "optional": true
+          },
+          {
+            "control_type": "text",
+            "label": "Mobilephone",
+            "name": "mobilephone",
+            "type": "string",
+            "optional": true
+          }
+        ]
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "keyword": "if",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "type": "compound",
+          "operand": "and",
+          "conditions": [
+            {
+              "operand": "present",
+              "lhs": "=_('data.workato_pub_sub.af1acfc8.message.fullname')",
+              "rhs": null,
+              "uuid": "condition-f977a8b2-e03a-4253-8348-4011a668e324"
+            }
+          ]
+        },
+        "block": [
+          {
+            "number": 2,
+            "provider": "intacct",
+            "name": "create_object",
+            "as": "ef37fe6c",
+            "title": "Create Customer",
+            "description": "Create <span class=\"provider\">Customer</span> in <span class=\"provider\">Sage Intacct</span>",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "type": "Customer"
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "type": "CUSTOMER",
+              "object": {
+                "CUSTOMERID": "=now.to_i",
+                "NAME": "#{_('data.workato_pub_sub.af1acfc8.message.fullname')}"
+              }
+            },
+            "extended_output_schema": [
+              {
+                "type": "string",
+                "name": "CUSTOMERID",
+                "control_type": "text",
+                "label": "Customer ID"
+              }
+            ],
+            "extended_input_schema": [
+              {
+                "type": "object",
+                "name": "object",
+                "label": "Customer",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Customer ID",
+                    "hint": "Unique id of customer",
+                    "type": "string",
+                    "name": "CUSTOMERID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Customer name",
+                    "hint": "Name of customer",
+                    "type": "string",
+                    "name": "NAME"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Parent key",
+                    "parse_output": "integer_conversion",
+                    "hint": "Parent key",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "PARENTKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Parent customer",
+                    "hint": "Name of parent customer",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PARENTID"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Customer name",
+                        "hint": "Unique identifier for customer contact name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "CONTACTNAME"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Company name",
+                        "hint": "Full name of the company",
+                        "optional": true,
+                        "type": "string",
+                        "name": "COMPANYNAME"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Prefix",
+                        "hint": "Mr./ms./mrs.",
+                        "optional": true,
+                        "type": "string",
+                        "name": "PREFIX"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "First name",
+                        "hint": "First name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "FIRSTNAME"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Last name",
+                        "hint": "Last name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "LASTNAME"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Middle name",
+                        "hint": "Middle name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "INITIAL"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Print as",
+                        "hint": "Print as",
+                        "optional": true,
+                        "type": "string",
+                        "name": "PRINTAS"
+                      },
+                      {
+                        "control_type": "checkbox",
+                        "label": "Taxable",
+                        "render_input": "boolean_conversion",
+                        "parse_output": "boolean_conversion",
+                        "toggle_hint": "Select from option list",
+                        "toggle_field": {
+                          "label": "Taxable",
+                          "control_type": "text",
+                          "toggle_hint": "Use custom value",
+                          "render_input": "boolean_conversion",
+                          "parse_output": "boolean_conversion",
+                          "hint": "Taxable ",
+                          "optional": true,
+                          "type": "boolean",
+                          "name": "TAXABLE"
+                        },
+                        "hint": "Taxable ",
+                        "optional": true,
+                        "type": "boolean",
+                        "name": "TAXABLE"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Tax group",
+                        "hint": "Tax group",
+                        "optional": true,
+                        "type": "string",
+                        "name": "TAXGROUP"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Tax ID",
+                        "hint": "Tax identification number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "TAXID"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Phone number",
+                        "hint": "Phone number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "PHONE1"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Phone 2",
+                        "hint": "Secondary phone number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "PHONE2"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Mobile phone",
+                        "hint": "Cellular phone number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "CELLPHONE"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Pager",
+                        "hint": "Pager",
+                        "optional": true,
+                        "type": "string",
+                        "name": "PAGER"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Fax",
+                        "hint": "Fax",
+                        "optional": true,
+                        "type": "string",
+                        "name": "FAX"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Email address",
+                        "hint": "Email address",
+                        "optional": true,
+                        "type": "string",
+                        "name": "EMAIL1"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Secondary email address",
+                        "hint": "Secondary email address",
+                        "optional": true,
+                        "type": "string",
+                        "name": "EMAIL2"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "URL",
+                        "hint": "Url",
+                        "optional": true,
+                        "type": "string",
+                        "name": "URL1"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "URL 2",
+                        "hint": "Secondary url",
+                        "optional": true,
+                        "type": "string",
+                        "name": "URL2"
+                      },
+                      {
+                        "control_type": "checkbox",
+                        "label": "Visible",
+                        "render_input": "boolean_conversion",
+                        "parse_output": "boolean_conversion",
+                        "toggle_hint": "Select from option list",
+                        "toggle_field": {
+                          "label": "Visible",
+                          "control_type": "text",
+                          "toggle_hint": "Use custom value",
+                          "render_input": "boolean_conversion",
+                          "parse_output": "boolean_conversion",
+                          "hint": "Visible",
+                          "optional": true,
+                          "type": "boolean",
+                          "name": "VISIBLE"
+                        },
+                        "hint": "Visible",
+                        "optional": true,
+                        "type": "boolean",
+                        "name": "VISIBLE"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Address line 1",
+                            "hint": "Address line 1",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ADDRESS1"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Address line 2",
+                            "hint": "Address line 2",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ADDRESS2"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "City",
+                            "hint": "City",
+                            "optional": true,
+                            "type": "string",
+                            "name": "CITY"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "State/Territory",
+                            "hint": "State/province",
+                            "optional": true,
+                            "type": "string",
+                            "name": "STATE"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Zip code/Post code",
+                            "hint": "Zip/postal code",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ZIP"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Country",
+                            "hint": "Country",
+                            "optional": true,
+                            "type": "string",
+                            "name": "COUNTRY"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Country code",
+                            "hint": "Country code",
+                            "optional": true,
+                            "type": "string",
+                            "name": "COUNTRYCODE"
+                          },
+                          {
+                            "control_type": "number",
+                            "label": "Latitude",
+                            "parse_output": "float_conversion",
+                            "hint": "Latitude",
+                            "optional": true,
+                            "type": "number",
+                            "name": "LATITUDE"
+                          },
+                          {
+                            "control_type": "number",
+                            "label": "Longitude",
+                            "parse_output": "float_conversion",
+                            "hint": "Longitude",
+                            "optional": true,
+                            "type": "number",
+                            "name": "LONGITUDE"
+                          }
+                        ],
+                        "label": "Mailaddress",
+                        "optional": true,
+                        "type": "object",
+                        "name": "MAILADDRESS"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Status",
+                        "hint": "Active/inactive",
+                        "optional": true,
+                        "type": "string",
+                        "name": "STATUS"
+                      }
+                    ],
+                    "label": "Displaycontact",
+                    "optional": true,
+                    "type": "object",
+                    "name": "DISPLAYCONTACT"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Term",
+                    "hint": "Term",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TERMNAME"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Term value",
+                    "hint": "Term value",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TERMVALUE"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Customer representative ID",
+                    "hint": "Customer rep",
+                    "optional": true,
+                    "type": "string",
+                    "name": "CUSTREPID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Resale number",
+                    "hint": "Resale number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "RESALENO"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax ID",
+                    "hint": "Tax identification number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TAXID"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Credit limit",
+                    "parse_output": "float_conversion",
+                    "hint": "Credit limit",
+                    "optional": true,
+                    "type": "number",
+                    "name": "CREDITLIMIT"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Comments",
+                    "hint": "Comments",
+                    "optional": true,
+                    "type": "string",
+                    "name": "COMMENTS"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Account label",
+                    "hint": "Accountlabel option",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ACCOUNTLABEL"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Default revenue account",
+                    "hint": "Account option",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ARACCOUNT"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "AR account title",
+                    "hint": "Ar account title",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ARACCOUNTTITLE"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Delivery options",
+                    "hint": "Delivery options",
+                    "optional": true,
+                    "type": "string",
+                    "name": "DELIVERY_OPTIONS"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Territory ID",
+                    "hint": "Territory id",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TERRITORYID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Shipping method",
+                    "hint": "Shipping method",
+                    "optional": true,
+                    "type": "string",
+                    "name": "SHIPPINGMETHOD"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Customer type ID",
+                    "hint": "Customer type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "CUSTTYPE"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "GL group record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Gl group record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "GLGRPKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "GL group",
+                    "hint": "Gl group",
+                    "optional": true,
+                    "type": "string",
+                    "name": "GLGROUP"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Price schedule",
+                    "hint": "Price schedule",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PRICESCHEDULE"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Discount %",
+                    "parse_output": "float_conversion",
+                    "hint": "Discount",
+                    "optional": true,
+                    "type": "number",
+                    "name": "DISCOUNT"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Customer price list",
+                    "hint": "Customer price schedule",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PRICELIST"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Fair value price list",
+                    "hint": "Fair value price schedule",
+                    "optional": true,
+                    "type": "string",
+                    "name": "VSOEPRICELIST"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Default currency",
+                    "hint": "Default currency",
+                    "optional": true,
+                    "type": "string",
+                    "name": "CURRENCY"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Primary contact",
+                        "hint": "Primary contact name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "CONTACTNAME"
+                      }
+                    ],
+                    "label": "Contactinfo",
+                    "optional": true,
+                    "type": "object",
+                    "name": "CONTACTINFO"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Ship-to contact",
+                        "hint": "Contact name for shipping",
+                        "optional": true,
+                        "type": "string",
+                        "name": "CONTACTNAME"
+                      }
+                    ],
+                    "label": "Shipto",
+                    "optional": true,
+                    "type": "object",
+                    "name": "SHIPTO"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Bill-to contact",
+                        "hint": "Contact name for billing",
+                        "optional": true,
+                        "type": "string",
+                        "name": "CONTACTNAME"
+                      }
+                    ],
+                    "label": "Billto",
+                    "optional": true,
+                    "type": "object",
+                    "name": "BILLTO"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "hint": "Active/active-non-posting/inactive",
+                    "optional": true,
+                    "type": "string",
+                    "name": "STATUS"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "One-time use",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "One-time use",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "One-time use",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "ONETIME"
+                    },
+                    "hint": "One-time use",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "ONETIME"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Default customer message",
+                    "hint": "Default customer message",
+                    "optional": true,
+                    "type": "string",
+                    "name": "CUSTMESSAGEID"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "On hold",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "On hold",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "On hold",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "ONHOLD"
+                    },
+                    "hint": "On hold",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "ONHOLD"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Price list override",
+                    "hint": "Valid values: <b>C</b> for Customer, <b>B</b> for Billing contact, <b>S</b> for Shipping contact</b>",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PRCLST_OVERRIDE"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "OE price list key",
+                    "parse_output": "integer_conversion",
+                    "hint": "Oe price list key",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "OEPRCLSTKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "OE price schedule key",
+                    "parse_output": "integer_conversion",
+                    "hint": "Oe price schedule key",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "OEPRICESCHEDKEY"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Enable online credit card",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "Enable online credit card",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "Enable online charge card",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "ENABLEONLINECARDPAYMENT"
+                    },
+                    "hint": "Enable online charge card",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "ENABLEONLINECARDPAYMENT"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Enable online ACH debit",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "Enable online ACH debit",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "Enable online ach debit",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "ENABLEONLINEACHPAYMENT"
+                    },
+                    "hint": "Enable online ach debit",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "ENABLEONLINEACHPAYMENT"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Fair value price list key",
+                    "parse_output": "integer_conversion",
+                    "hint": "Fair value price list key",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "VSOEPRCLSTKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "AR invoice printing template",
+                    "hint": "Format template for printing ar invoice document (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ARINVOICEPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - Quote printing template",
+                    "hint": "Format template for printing order entry quote documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OEQUOTEPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - Order printing template",
+                    "hint": "Format template for printing order entry order documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OEORDERPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - List printing template",
+                    "hint": "Format template for printing order entry list documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OELISTPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - Invoice printing template",
+                    "hint": "Format template for printing order entry invoice documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OEINVOICEPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - Adjustment printing template",
+                    "hint": "Format template for printing order entry adjustment documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OEADJPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order entry - Other printing template",
+                    "hint": "Format template for printing order entry other documents (xsl or doc or dox)",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OEOTHERPRINTTEMPLATEID"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Object restriction",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OBJECTRESTRICTION"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Display contact record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "DISPLAYCONTACTKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Ship-via record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Ship-via record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "SHIPVIAKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Territory record number",
+                    "hint": "Territory record number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TERRITORYKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Term record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Term record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "TERMSKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Account label record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Account label record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "ACCOUNTLABELKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "GL account record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Gl account record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "ACCOUNTKEY"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Customer type record number",
+                    "parse_output": "integer_conversion",
+                    "hint": "Customer type record number",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "CUSTTYPEKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Price schedule record number",
+                    "hint": "Price schedule record number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PRICESCHEDULEKEY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "AR account",
+                    "hint": "Ar account",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OFFSETGLACCOUNTNO"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Default AR account",
+                    "hint": "Default ar account",
+                    "optional": true,
+                    "type": "string",
+                    "name": "OFFSETGLACCOUNTNOTITLE"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Bill in advance",
+                    "parse_output": "integer_conversion",
+                    "hint": "Bill in advance",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "ADVBILLBY"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Before contract start date",
+                    "hint": "Bill in advance type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ADVBILLBYTYPE"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Attachment",
+                    "hint": "Attachment",
+                    "optional": true,
+                    "type": "string",
+                    "name": "SUPDOCID"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Default retainage percentage",
+                    "parse_output": "float_conversion",
+                    "hint": "Default retainage percentage",
+                    "optional": true,
+                    "type": "number",
+                    "name": "RETAINAGEPERCENTAGE"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Accepts emailed invoices",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "Accepts emailed invoices",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "Accepts emailed invoices",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "EMAILOPTIN"
+                    },
+                    "hint": "Accepts emailed invoices",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "EMAILOPTIN"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "_Custom checkbox",
+                    "render_input": "boolean_conversion",
+                    "parse_output": "boolean_conversion",
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "_Custom checkbox",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "render_input": "boolean_conversion",
+                      "parse_output": "boolean_conversion",
+                      "hint": "Custom checkbox",
+                      "optional": true,
+                      "type": "boolean",
+                      "name": "CUSTOM_CHECKBOX"
+                    },
+                    "hint": "Custom checkbox",
+                    "optional": true,
+                    "type": "boolean",
+                    "name": "CUSTOM_CHECKBOX"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "currency Custom",
+                    "parse_output": "float_conversion",
+                    "hint": "Currency custom",
+                    "optional": true,
+                    "type": "number",
+                    "name": "CURRENCY_CUSTOM"
+                  },
+                  {
+                    "control_type": "date",
+                    "label": "Date custom",
+                    "render_input": "render_intacct_date",
+                    "parse_output": "parse_intacct_date",
+                    "hint": "Date custom",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "DATE_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Email custom",
+                    "hint": "Email custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "EMAIL_CUSTOM"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Number custom",
+                    "parse_output": "float_conversion",
+                    "hint": "Number custom",
+                    "optional": true,
+                    "type": "number",
+                    "name": "NUMBER_CUSTOM"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Percent custom",
+                    "parse_output": "float_conversion",
+                    "hint": "Percent custom",
+                    "optional": true,
+                    "type": "number",
+                    "name": "PERCENT_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Picklist custom",
+                    "hint": "Picklist custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PICKLIST_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Picklist 2 custom",
+                    "hint": "Picklist 2 custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PICKLIST_2_CUSOTM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Seq custom",
+                    "hint": "Seq custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "SEQ_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Txt custom",
+                    "hint": "Txt custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TXT_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Text area custom",
+                    "hint": "Text area custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "TEXT_AREA_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "url custom",
+                    "hint": "Url custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "URL_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "password custom",
+                    "hint": "Password custom",
+                    "optional": true,
+                    "type": "string",
+                    "name": "PASSWORD_CUSTOM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "GabrielCustomField",
+                    "hint": "Gabrielcustomfield",
+                    "optional": true,
+                    "type": "string",
+                    "name": "GABRIELCUSTOMFIELD"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Attendee",
+                    "optional": true,
+                    "type": "string",
+                    "name": "Rattendee"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Misc Supporting Document",
+                    "optional": true,
+                    "type": "string",
+                    "name": "Rmisc_supporting_document"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item",
+                    "optional": true,
+                    "type": "string",
+                    "name": "RITEM"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Billing Contact",
+                    "optional": true,
+                    "type": "string",
+                    "name": "Rbilling_contact"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee",
+                    "optional": true,
+                    "type": "string",
+                    "name": "REMPLOYEE"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Classes",
+                    "optional": true,
+                    "type": "string",
+                    "name": "RCLASS"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Class",
+                    "optional": true,
+                    "type": "string",
+                    "name": "CLASSRE"
+                  }
+                ]
+              }
+            ],
+            "visible_config_fields": [
+              "type",
+              "object",
+              "object.CUSTOMERID",
+              "object.NAME",
+              "object.ACCOUNTLABEL"
+            ],
+            "uuid": "c43de5e3-fb42-4f3d-9958-c3fbc1172dee"
+          },
+          {
+            "number": 3,
+            "provider": "intacct",
+            "name": "create_invoice",
+            "as": "ea7ac136",
+            "title": null,
+            "description": null,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "datecreated": "2021-11-04",
+              "customerid": "#{_('data.intacct.ef37fe6c.CUSTOMERID')}",
+              "datedue": "2021-11-11",
+              "invoiceitems": {
+                "lineitem": {
+                  "amount": "12345",
+                  "glaccountno": "1111"
+                }
+              }
+            },
+            "uuid": "bd58deb5-7045-41dd-a452-fb18b362c20e"
+          },
+          {
+            "number": 4,
+            "keyword": "else",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+            },
+            "block": [
+              {
+                "number": 5,
+                "provider": "email",
+                "name": "send_mail",
+                "as": "4406784e",
+                "title": null,
+                "description": null,
+                "keyword": "action",
+                "dynamicPickListSelection": {
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "to": "#{_('data.workato.job_context.user_email')}",
+                  "subject": "Created new contact in Salesforce from Kafka",
+                  "body": "Hello,  Workato recipe #{_('data.workato.job_context.recipe_id')} / #{_('data.workato.job_context.recipe_name')} just created a new contact in Salesforce.\nDetails : \nFull name :  #{_('data.workato_pub_sub.af1acfc8.message.fullname')}",
+                  "email_type": "html"
+                },
+                "uuid": "7b462d04-c63b-4df6-a458-d8afe6be238f"
+              }
+            ],
+            "uuid": "e9c78cd2-b91e-47bb-a3bb-c9624bbb4a3b"
+          }
+        ],
+        "comment": "",
+        "uuid": "be4d8e1e-4ece-45ce-85db-c4f87475378d"
+      }
+    ],
+    "uuid": "e218a454-b6f0-4a4c-a8c4-b7e8432c31f6"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "email",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "intacct",
+      "account_id": {
+        "zip_name": "Customers/my_sage_intacct_account.connection.json",
+        "name": "My Sage Intacct account",
+        "folder": "Customers"
+      },
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "workato_pub_sub",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}

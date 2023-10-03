@@ -1,0 +1,47 @@
+{
+  "name": "Aveva",
+  "schema": [
+    {
+      "control_type": "text",
+      "label": "Fullname",
+      "name": "fullname",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "control_type": "text",
+      "label": "Contactid",
+      "name": "contactid",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "control_type": "text",
+      "label": "Createddate",
+      "name": "createddate",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "control_type": "text",
+      "label": "Email",
+      "name": "email",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "control_type": "text",
+      "label": "Address",
+      "name": "address",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "control_type": "text",
+      "label": "Mobilephone",
+      "name": "mobilephone",
+      "type": "string",
+      "optional": true
+    }
+  ]
+}

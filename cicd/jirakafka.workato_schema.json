@@ -1,0 +1,36 @@
+{
+  "name": "jirakafka",
+  "schema": [
+    {
+      "properties": [
+        {
+          "control_type": "text",
+          "label": "Jiraissue",
+          "type": "string",
+          "name": "jiraissue"
+        },
+        {
+          "control_type": "text",
+          "label": "Comment",
+          "type": "string",
+          "name": "comment"
+        },
+        {
+          "control_type": "text",
+          "label": "Description",
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "control_type": "text",
+          "label": "URL",
+          "type": "string",
+          "name": "url"
+        }
+      ],
+      "label": "Input",
+      "type": "object",
+      "name": "input"
+    }
+  ]
+}

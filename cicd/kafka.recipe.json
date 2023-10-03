@@ -1,0 +1,197 @@
+{
+  "name": "Kafka",
+  "description": "When there is a trigger event, do action",
+  "version": 11,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workday",
+    "name": "new_updated_object_batch",
+    "as": "c343e9e0",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+    },
+    "block": [
+      {
+        "number": 1,
+        "provider": "workday",
+        "name": "",
+        "as": "",
+        "description": "",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+        },
+        "comment": "polls next page in Workday",
+        "uuid": "b073be45-29ae-40d8-b856-67b8e5736758"
+      },
+      {
+        "number": 2,
+        "provider": "workato_variable",
+        "name": "declare_list",
+        "as": "38a1a61a",
+        "title": " Create test list",
+        "description": "Create <span class=\"provider\">test</span> list",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "name": "test",
+          "list_item_schema_json": "[{\"name\":\"num1\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Num 1\"},{\"name\":\"num2\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Num 2\"}]"
+        },
+        "extended_output_schema": [
+          {
+            "hint": "",
+            "label": "test",
+            "name": "list_items",
+            "of": "object",
+            "optional": false,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Num 1",
+                "name": "num1",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Num 2",
+                "name": "num2",
+                "type": "string",
+                "optional": false
+              }
+            ],
+            "type": "array"
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "hint": "Set the initial items in the list. Defaults to an empty list if not supplied.",
+            "label": "Items",
+            "name": "list_items",
+            "of": "object",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Num 1",
+                "name": "num1",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Num 2",
+                "name": "num2",
+                "type": "string",
+                "optional": false
+              }
+            ],
+            "type": "array"
+          }
+        ],
+        "uuid": "a30e41f3-4ee3-4dee-8b31-ccf1bd7c3503"
+      },
+      {
+        "number": 3,
+        "provider": "workato_variable",
+        "name": "insert_to_list_batch",
+        "as": "6677d470",
+        "title": "Add items to test list",
+        "description": "Add <span class=\"provider\">items</span> to <span class=\"provider\">test</span> list",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+          "name": "test (step 3)"
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "location": "end",
+          "name": "a30e41f3-4ee3-4dee-8b31-ccf1bd7c3503:38a1a61a"
+        },
+        "extended_input_schema": [
+          {
+            "hint": "",
+            "label": "List items",
+            "name": "list_items",
+            "of": "object",
+            "optional": false,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Num 1",
+                "name": "num1",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Num 2",
+                "name": "num2",
+                "type": "string",
+                "optional": false
+              }
+            ],
+            "type": "array"
+          }
+        ],
+        "uuid": "b4859537-7e5a-4315-9c65-fefc47f5cf2c"
+      },
+      {
+        "number": 4,
+        "provider": "intacct",
+        "name": "search_customers",
+        "as": "d628d2c1",
+        "title": null,
+        "description": null,
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "customerid": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"fullname\"]}')}#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"contactid\"]}')}#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"createddate\"]}')}#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"email\"]}')}#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"address\"]}')}#{_dp('{\"pill_type\":\"output\",\"provider\":\"kafka\",\"line\":\"d20c8121\",\"path\":[\"message\",\"mobilephone\"]}')}"
+        },
+        "uuid": "13160020-4bfc-43cd-84d3-cd9f3924e3ed",
+        "skip": false
+      }
+    ],
+    "comment": "10",
+    "uuid": "550f8edf-3f2e-4235-892b-a4074482d49b"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "intacct",
+      "account_id": {
+        "zip_name": "Customers/my_sage_intacct_account.connection.json",
+        "name": "My Sage Intacct account",
+        "folder": "Customers"
+      },
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "workday",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "workato_variable",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}
