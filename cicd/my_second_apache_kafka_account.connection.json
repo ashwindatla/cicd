@@ -1,0 +1,6 @@
+{
+  "name": "My second Apache Kafka account",
+  "provider": "kafka",
+  "secure_gateway_tunnel_name": "2.8.1",
+  "root_folder": false
+}
