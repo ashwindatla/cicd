@@ -1,134 +1,34 @@
 {
-  "name": "Demo",
-  "description": "When there is a new event via HTTP webhook, do action",
-  "version": 2,
+  "name": "Demo ",
+  "description": "When there is a trigger event, do action",
+  "version": 1,
   "private": true,
   "concurrency": 1,
   "code": {
     "number": 0,
-    "provider": "workato_webhooks",
-    "name": "new_event",
-    "as": "641769ea",
-    "title": null,
-    "description": "<span class=\"provider\">New event</span> via <span class=\"provider\">HTTP webhook</span>",
     "keyword": "trigger",
     "dynamicPickListSelection": {
     },
     "toggleCfg": {
     },
     "input": {
-      "request": {
-        "webhook_type": "json"
-      }
     },
-    "extended_output_schema": [
-      {
-        "type": "object",
-        "name": "headers",
-        "label": "Headers",
-        "properties": [
-
-        ]
-      },
-      {
-        "type": "object",
-        "name": "payload",
-        "label": "Payload",
-        "properties": [
-
-        ]
-      }
-    ],
-    "extended_input_schema": [
-      {
-        "type": "object",
-        "name": "request",
-        "label": "Payload configuration",
-        "properties": [
-          {
-            "control_type": "select",
-            "label": "Webhook type",
-            "pick_list": [
-              [
-                "GET request",
-                "get"
-              ],
-              [
-                "PUT/POST with JSON payload",
-                "json"
-              ],
-              [
-                "PUT/POST with XML payload",
-                "xml"
-              ],
-              [
-                "PUT/POST with FORM encoded payload",
-                "form"
-              ],
-              [
-                "PUT/POST with raw binary data",
-                "rawdata"
-              ],
-              [
-                "PUT/POST with unicode text data",
-                "rawdatatxt"
-              ]
-            ],
-            "hint": "Select the HTTP method and payload data type used by webhook. <a href=\"https://support.workato.com/support/solutions/articles/1000241356-http-real-time-webhook-type\" target=\"_blank\">Learn more</a>",
-            "default": "json",
-            "extends_schema": true,
-            "type": "string",
-            "name": "webhook_type"
-          },
-          {
-            "control_type": "schema-designer",
-            "label": "Payload schema",
-            "sample_data_type": "json_http",
-            "extends_schema": true,
-            "empty_schema_title": "Describe all fields in your response.",
-            "optional": true,
-            "sticky": true,
-            "type": "string",
-            "name": "payload_schema"
-          },
-          {
-            "control_type": "schema-designer",
-            "label": "Headers",
-            "extends_schema": true,
-            "empty_schema_title": "Describe all the webhook headers",
-            "optional": true,
-            "sticky": true,
-            "type": "string",
-            "name": "headers_schema"
-          }
-        ],
-        "override": true
-      }
-    ],
     "block": [
-      {
-        "number": 1,
-        "provider": "slack",
-        "name": "post_message_to_channel",
-        "as": "93a0496c",
-        "keyword": "action",
-        "dynamicPickListSelection": {
-          "channel": "general"
-        },
-        "toggleCfg": {
-          "channel": true
-        },
-        "input": {
-          "parse": "false",
-          "channel": "CKXANV44W",
-          "text": "=_('data.workato_webhooks.641769ea.payload')"
-        },
-        "uuid": "bc767695-9cbd-40c7-b7e7-805c605aac98"
-      }
+
     ],
-    "uuid": "385ad188-ae0b-4a5a-8b9e-858e2e24688b"
+    "uuid": "9a8e4588-d57d-4f85-aa9a-b9dd8e3247e5"
   },
   "config": [
+    {
+      "keyword": "application",
+      "provider": "rest",
+      "account_id": {
+        "zip_name": "my_http_account.connection.json",
+        "name": "My HTTP account",
+        "folder": ""
+      },
+      "skip_validation": false
+    },
     {
       "keyword": "application",
       "provider": "workato_webhooks",
@@ -137,11 +37,22 @@
     },
     {
       "keyword": "application",
-      "provider": "slack",
+      "provider": "google_sheets",
       "account_id": {
-        "zip_name": "BitSight/botdemo.connection.json",
-        "name": "BotDemo",
-        "folder": "BitSight"
+        "zip_name": "Training/my_google_sheets_account.connection.json",
+        "name": "My Google Sheets account",
+        "folder": "Training"
+      },
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "new_connector_2_connector_374775_1631095272",
+      "account_id": {
+        "zip_name": "my_chargebee_account.connection.json",
+        "name": "My Chargebee account",
+        "folder": "",
+        "custom": true
       },
       "skip_validation": false
     }

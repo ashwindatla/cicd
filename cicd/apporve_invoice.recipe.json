@@ -1,0 +1,3401 @@
+{
+  "name": "apporve invoice",
+  "description": "When there is a trigger event, do action",
+  "version": 8,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "slack_bot",
+    "name": "bot_command_v2",
+    "as": "1007635c",
+    "title": null,
+    "description": "New <span class=\"provider\">Chargebee Approve invoice</span> command to <span class=\"provider\">Slack Workbot</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+      "domain": false,
+      "name": false,
+      "scope": true
+    },
+    "input": {
+      "allow_dialog": "true",
+      "domain": "Chargebee",
+      "name": "Approve",
+      "scope": "invoice",
+      "parameters": "[\n  {\n    \"name\": \"invoiceid\",\n    \"type\": \"string\",\n    \"optional\": false\n  }\n]"
+    },
+    "extended_output_schema": [
+      {
+        "type": "object",
+        "name": "parameters",
+        "label": "Parameters",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Invoiceid",
+            "name": "invoiceid",
+            "type": "string",
+            "optional": false
+          }
+        ]
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "new_connector_2_connector_374775_1631095272",
+        "name": "search_objects",
+        "as": "e3437789",
+        "title": null,
+        "description": "Search <span class=\"provider\">Invoices</span> in <span class=\"provider\">Chargebee</span>",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+          "object": "Invoices",
+          "id.operator": "Is"
+        },
+        "toggleCfg": {
+          "id.operator": true,
+          "include_deleted": true
+        },
+        "input": {
+          "object": "invoice",
+          "id": {
+            "value": "#{_('data.slack_bot.1007635c.parameters.invoiceid')}",
+            "operator": "is"
+          },
+          "include_deleted": "false"
+        },
+        "extended_output_schema": [
+          {
+            "type": "array",
+            "name": "invoices",
+            "label": "Invoices",
+            "optional": true,
+            "of": "object",
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "ID",
+                "optional": true,
+                "type": "string",
+                "name": "id"
+              },
+              {
+                "control_type": "text",
+                "label": "Customer ID",
+                "sticky": true,
+                "hint": "Identifier of the customer for which this invoice needs to be created. Should be specified if subscription_id is not specified.",
+                "optional": true,
+                "type": "string",
+                "name": "customer_id"
+              },
+              {
+                "control_type": "text",
+                "label": "Subscription ID",
+                "sticky": true,
+                "hint": "Identifier of the subscription for which this invoice needs to be created. Should be specified if customer_id is not specified.(not applicable for consolidated invoice).",
+                "optional": true,
+                "type": "string",
+                "name": "subscription_id"
+              },
+              {
+                "control_type": "text",
+                "label": "Purchase order number",
+                "optional": true,
+                "type": "string",
+                "name": "po_number"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Recurring",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "recurring"
+              },
+              {
+                "control_type": "text",
+                "label": "Status",
+                "optional": true,
+                "type": "string",
+                "name": "status"
+              },
+              {
+                "control_type": "select",
+                "label": "Auto collection",
+                "pick_list": "auto_collection_list",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "auto_collection",
+                  "type": "string",
+                  "control_type": "text",
+                  "label": "Auto collection",
+                  "optional": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are <b>on, off</b>"
+                },
+                "hint": "Whether payments needs to be collected automatically for this customer.",
+                "optional": true,
+                "type": "string",
+                "name": "auto_collection"
+              },
+              {
+                "control_type": "text",
+                "label": "Token ID",
+                "sticky": true,
+                "hint": "Token generated by Chargebee JS representing payment method details.",
+                "optional": true,
+                "type": "string",
+                "name": "token_id"
+              },
+              {
+                "name": "coupon_ids",
+                "type": "array",
+                "of": "string",
+                "label": "Coupon IDs",
+                "sticky": true,
+                "optional": true
+              },
+              {
+                "control_type": "text",
+                "label": "Authorization transaction ID",
+                "sticky": true,
+                "hint": "Authorization transaction to be captured.",
+                "optional": true,
+                "type": "string",
+                "name": "authorization_transaction_id"
+              },
+              {
+                "control_type": "text",
+                "label": "Payment source ID",
+                "sticky": true,
+                "hint": "Payment source to be used for this payment.",
+                "optional": true,
+                "type": "string",
+                "name": "payment_source_id"
+              },
+              {
+                "control_type": "text",
+                "label": "VAT/ Tax registration number",
+                "optional": true,
+                "type": "string",
+                "name": "vat_number"
+              },
+              {
+                "control_type": "text",
+                "label": "Price type",
+                "optional": true,
+                "type": "string",
+                "name": "price_type"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Date",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "date"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Due date",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "due_date"
+              },
+              {
+                "control_type": "integer",
+                "label": "Net term days",
+                "parse_output": "integer_conversion",
+                "optional": true,
+                "type": "integer",
+                "name": "net_term_days"
+              },
+              {
+                "control_type": "text",
+                "label": "Currency code",
+                "hint": "The currency code (ISO 4217 format) of the invoice amount. Required if Multicurrency is enabled",
+                "optional": true,
+                "type": "string",
+                "name": "currency_code"
+              },
+              {
+                "control_type": "text",
+                "label": "Invoice note",
+                "optional": true,
+                "type": "string",
+                "name": "invoice_note"
+              },
+              {
+                "control_type": "number",
+                "label": "Total",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "total"
+              },
+              {
+                "control_type": "number",
+                "label": "Amount paid",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "amount_paid"
+              },
+              {
+                "control_type": "number",
+                "label": "Amount adjusted",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "amount_adjusted"
+              },
+              {
+                "control_type": "number",
+                "label": "Write off amount",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "write_off_amount"
+              },
+              {
+                "control_type": "number",
+                "label": "Credits applied",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "credits_applied"
+              },
+              {
+                "control_type": "number",
+                "label": "Amount due",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "amount_due"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Paid at",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "paid_at"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Remove general note",
+                "parse_output": "boolean_conversion",
+                "toggle_hint": "Select from list",
+                "render_input": "boolean_conversion",
+                "toggle_field": {
+                  "name": "remove_general_note",
+                  "label": "Remove general note",
+                  "type": "string",
+                  "control_type": "text",
+                  "optional": true,
+                  "sticky": true,
+                  "parse_output": "boolean_conversion",
+                  "render_input": "boolean_conversion",
+                  "hint": "Accepted values are true or false",
+                  "toggle_hint": "Use custom value"
+                },
+                "optional": true,
+                "type": "number",
+                "name": "remove_general_note"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Replace primary payment source",
+                "parse_output": "boolean_conversion",
+                "toggle_hint": "Select from list",
+                "render_input": "boolean_conversion",
+                "toggle_field": {
+                  "name": "replace_primary_payment_source",
+                  "label": "Replace primary payment source",
+                  "type": "string",
+                  "control_type": "text",
+                  "optional": true,
+                  "sticky": true,
+                  "parse_output": "boolean_conversion",
+                  "render_input": "boolean_conversion",
+                  "hint": "Accepted values are true or false",
+                  "toggle_hint": "Use custom value"
+                },
+                "optional": true,
+                "type": "number",
+                "name": "replace_primary_payment_source"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Retain payment source",
+                "parse_output": "boolean_conversion",
+                "toggle_hint": "Select from list",
+                "render_input": "boolean_conversion",
+                "toggle_field": {
+                  "name": "retain_payment_source",
+                  "label": "Retain payment source",
+                  "type": "string",
+                  "control_type": "text",
+                  "optional": true,
+                  "sticky": true,
+                  "parse_output": "boolean_conversion",
+                  "render_input": "boolean_conversion",
+                  "hint": "Accepted values are true or false",
+                  "toggle_hint": "Use custom value"
+                },
+                "optional": true,
+                "type": "number",
+                "name": "retain_payment_source"
+              },
+              {
+                "control_type": "text",
+                "label": "Dunning status",
+                "optional": true,
+                "type": "string",
+                "name": "dunning_status"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Next retry at",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "next_retry_at"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Voided at",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "voided_at"
+              },
+              {
+                "control_type": "number",
+                "label": "Resource version",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "resource_version"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Updated at",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "updated_at"
+              },
+              {
+                "control_type": "number",
+                "label": "Sub total",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "sub_total"
+              },
+              {
+                "control_type": "number",
+                "label": "Sub total in local currency",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "sub_total_in_local_currency"
+              },
+              {
+                "control_type": "number",
+                "label": "Total in local currency",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "total_in_local_currency"
+              },
+              {
+                "control_type": "text",
+                "label": "Local currency code",
+                "optional": true,
+                "type": "string",
+                "name": "local_currency_code"
+              },
+              {
+                "control_type": "number",
+                "label": "Tax",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "tax"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "First invoice",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "first_invoice"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Has advance charges",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "has_advance_charges"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Term finalized",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "term_finalized"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Is gifted",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "is_gifted"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Expected payment date",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "optional": true,
+                "type": "date_time",
+                "name": "expected_payment_date"
+              },
+              {
+                "control_type": "number",
+                "label": "Amount to collect",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "amount_to_collect"
+              },
+              {
+                "control_type": "integer",
+                "label": "Exchange rate",
+                "parse_output": "integer_conversion",
+                "optional": true,
+                "type": "integer",
+                "name": "exchange_rate"
+              },
+              {
+                "control_type": "integer",
+                "label": "New sales amount",
+                "parse_output": "integer_conversion",
+                "optional": true,
+                "type": "integer",
+                "name": "new_sales_amount"
+              },
+              {
+                "control_type": "text",
+                "label": "Base currency code",
+                "optional": true,
+                "type": "string",
+                "name": "base_currency_code"
+              },
+              {
+                "control_type": "number",
+                "label": "Round off amount",
+                "parse_output": "float_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "round_off_amount"
+              },
+              {
+                "control_type": "text",
+                "label": "Payment owner",
+                "optional": true,
+                "type": "string",
+                "name": "payment_owner"
+              },
+              {
+                "control_type": "text",
+                "label": "Void reason code",
+                "optional": true,
+                "type": "string",
+                "name": "void_reason_code"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Deleted",
+                "parse_output": "boolean_conversion",
+                "optional": true,
+                "type": "number",
+                "name": "deleted"
+              },
+              {
+                "name": "line_items",
+                "type": "array",
+                "of": "object",
+                "label": "Line items",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Subscription ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "subscription_id"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Date from",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "date_from"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Date to",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "date_to"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Unit amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "unit_amount"
+                  },
+                  {
+                    "control_type": "integer",
+                    "label": "Quantity",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "quantity"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Pricing model",
+                    "optional": true,
+                    "type": "string",
+                    "name": "pricing_model"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Is taxed",
+                    "parse_output": "boolean_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "is_taxed"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Tax amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "tax_amount"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Tax rate",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "tax_rate"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit amount in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "unit_amount_in_decimal"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Quantity in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "quantity_in_decimal"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Amount in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "amount_in_decimal"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Discount amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "discount_amount"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Item level discount amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "item_level_discount_amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Description",
+                    "optional": true,
+                    "type": "string",
+                    "name": "description"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity description",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_description"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax exempt reason",
+                    "optional": true,
+                    "type": "string",
+                    "name": "tax_exempt_reason"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Customer ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "customer_id"
+                  }
+                ]
+              },
+              {
+                "name": "discounts",
+                "type": "array",
+                "of": "object",
+                "label": "Discounts",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "number",
+                    "label": "Amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Description",
+                    "optional": true,
+                    "type": "string",
+                    "name": "description"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_id"
+                  }
+                ]
+              },
+              {
+                "name": "line_item_discounts",
+                "type": "array",
+                "of": "object",
+                "label": "Line item discounts",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Line item ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line_item_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Discount type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "discount_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Coupon ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "coupon_id"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Discount amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "discount_amount"
+                  }
+                ]
+              },
+              {
+                "name": "taxes",
+                "type": "array",
+                "of": "object",
+                "label": "Taxes",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "name"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Description",
+                    "optional": true,
+                    "type": "string",
+                    "name": "description"
+                  }
+                ]
+              },
+              {
+                "name": "line_item_taxes",
+                "type": "array",
+                "of": "object",
+                "label": "Line item taxes",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Line item ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line_item_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "tax_name"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Tax rate",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "tax_rate"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Is partial tax applied",
+                    "parse_output": "boolean_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "is_partial_tax_applied"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Is non compliance tax",
+                    "parse_output": "boolean_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "is_non_compliance_tax"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Taxable amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "taxable_amount"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Tax amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "tax_amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax juris type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "tax_juris_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax juris name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "tax_juris_name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Tax juris code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "tax_juris_code"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Tax amount in local currency",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "tax_amount_in_local_currency"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": " Local currency code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "local_currency_code"
+                  }
+                ]
+              },
+              {
+                "name": "line_item_tiers",
+                "type": "array",
+                "of": "object",
+                "label": "Line item tiers",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Line item ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line_item_id"
+                  },
+                  {
+                    "control_type": "integer",
+                    "label": "Starting unit",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "starting_unit"
+                  },
+                  {
+                    "control_type": "integer",
+                    "label": "Ending unit",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "ending_unit"
+                  },
+                  {
+                    "control_type": "integer",
+                    "label": "Quantity used",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "quantity_used"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Unit amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "unit_amount"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Starting unit in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "starting_unit_in_decimal"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Ending unit in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "ending_unit_in_decimal"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Quantity used in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "quantity_used_in_decimal"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit amount in decimal",
+                    "optional": true,
+                    "type": "string",
+                    "name": "unit_amount_in_decimal"
+                  }
+                ]
+              },
+              {
+                "name": "linked_payments",
+                "type": "array",
+                "of": "object",
+                "label": "Linked payments",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Transaction ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "txn_id"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Applied amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "applied_amount"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Applied at",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "applied_at"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Transaction status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "txn_status"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Transaction date",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "txn_date"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Transaction amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "txn_amount"
+                  }
+                ]
+              },
+              {
+                "name": "dunning_attempts",
+                "type": "array",
+                "of": "object",
+                "label": "Dunning attempts",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "integer",
+                    "label": "Attempt",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "attempt"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Transaction ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "transaction_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Dunning type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "dunning_type"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Created at",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "created_at"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Transaction status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "txn_status"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Transaction amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "txn_amount"
+                  }
+                ]
+              },
+              {
+                "name": "applied_credits",
+                "type": "array",
+                "of": "object",
+                "label": "Applied credits",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Credit note ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_id"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Applied amount",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "applied_amount"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Applied at",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "applied_at"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_reason_code"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note reason code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_create_reason_code"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Credit note date",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "cn_date"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_status"
+                  }
+                ]
+              },
+              {
+                "name": "adjustment_credit_notes",
+                "type": "array",
+                "of": "object",
+                "label": "Adjustment credit notes",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Credit note ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_reason_code"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note reason code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_create_reason_code"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Credit note date",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "cn_date"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_status"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Credit note total",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "cn_total"
+                  }
+                ]
+              },
+              {
+                "name": "issued_credit_notes",
+                "type": "array",
+                "of": "object",
+                "label": "Issued credit notes",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Credit note ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_reason_code"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note reason code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_create_reason_code"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Cn date",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "cn_date"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Credit note status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "cn_status"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Credit note total",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "cn_total"
+                  }
+                ]
+              },
+              {
+                "name": "linked_orders",
+                "type": "array",
+                "of": "object",
+                "label": "Linked orders",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Document number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "document_number"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "status"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Order type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "order_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reference ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "reference_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Fulfillment status",
+                    "optional": true,
+                    "type": "string",
+                    "name": "fulfillment_status"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Batch ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "batch_id"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Created at",
+                    "render_input": "render_epoch_time",
+                    "parse_output": "render_iso8601_timestamp",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "created_at"
+                  }
+                ]
+              },
+              {
+                "name": "notes",
+                "type": "array",
+                "of": "object",
+                "label": "Notes",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Entity type",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_type"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Note",
+                    "optional": true,
+                    "type": "string",
+                    "name": "note"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Entity ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "entity_id"
+                  }
+                ]
+              },
+              {
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "First name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "first_name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Last name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "last_name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Email",
+                    "optional": true,
+                    "type": "string",
+                    "name": "email"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Company",
+                    "optional": true,
+                    "type": "string",
+                    "name": "company"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Phone",
+                    "optional": true,
+                    "type": "string",
+                    "name": "phone"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Line 1",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line1"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Line 2",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line2"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Line 3",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line3"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "City",
+                    "optional": true,
+                    "type": "string",
+                    "name": "city"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "State code",
+                    "optional": true,
+                    "type": "string",
+                    "name": "state_code"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "State",
+                    "optional": true,
+                    "type": "string",
+                    "name": "state"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Country",
+                    "optional": true,
+                    "type": "string",
+                    "name": "country"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Zip",
+                    "optional": true,
+                    "type": "string",
+                    "name": "zip"
+                  },
+                  {
+                    "control_type": "select",
+                    "label": "Validation status",
+                    "pick_list": "validation_status_list",
+                    "toggle_hint": "Select from list",
+                    "toggle_field": {
+                      "name": "validation_status",
+                      "control_type": "text",
+                      "type": "string",
+                      "optional": true,
+                      "label": "Customer type",
+                      "toggle_hint": "Use custom value",
+                      "hint": "Allowed vaalues are: not_validated, valid, partially_valid, invalid"
+                    },
+                    "hint": "The address verification status.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "validation_status"
+                  }
+                ],
+                "label": "Shipping address",
+                "optional": true,
+                "type": "object",
+                "name": "shipping_address"
+              },
+              {
+                "name": "payment_intent",
+                "type": "array",
+                "of": "object",
+                "label": "Payment intent",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Payment intent ID",
+                    "hint": "Payment intent ID generated by Chargebee.js",
+                    "optional": true,
+                    "type": "string",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Gateway account ID",
+                    "hint": "Gateway account used for performing the 3DS flow.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "gateway_account_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Gateway token",
+                    "hint": "Identifier for 3DS transaction/verification object at the gateway.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "gw_token"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reference ID",
+                    "hint": "Identifier for Braintree permanent token. Applicable when you are using Braintree APIs for completing the 3DS flow.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "reference_id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Additional information",
+                    "hint": "Pass a stringified JSON. For E.g: click <a href='https://apidocs.chargebee.com/docs/api/payment_parameters#payment_intent_additonal_info_sample'>here<a> to see sample json.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "additional_info"
+                  }
+                ]
+              },
+              {
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "First name",
+                    "hint": "The first name of the billing contact.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "first_name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Last name",
+                    "hint": "The last name of the billing contact.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "last_name"
+                  },
+                  {
+                    "control_type": "email",
+                    "label": "Email",
+                    "hint": "The email address.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "email"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Company name",
+                    "hint": "Name of the company.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "company"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Phone Number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "phone"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Address line 1",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line1"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Address line 2",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line2"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Address line 3",
+                    "optional": true,
+                    "type": "string",
+                    "name": "line3"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "City",
+                    "hint": "Name of the city",
+                    "optional": true,
+                    "type": "string",
+                    "name": "city"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "State code",
+                    "hint": "The ISO 3166-2 state/province code without the country prefix. Currently supported for USA, Canada and India",
+                    "optional": true,
+                    "type": "string",
+                    "name": "state_code"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "State",
+                    "hint": "Name of the state.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "state"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Country code",
+                    "hint": "2-letter, ISO 3166 alpha-2 country code.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "country"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Zip",
+                    "hint": "Zip or Postal code.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "zip"
+                  },
+                  {
+                    "control_type": "select",
+                    "label": "Validation status",
+                    "pick_list": "validation_status_list",
+                    "toggle_hint": "Select from list",
+                    "toggle_field": {
+                      "name": "validation_status",
+                      "control_type": "text",
+                      "type": "string",
+                      "optional": true,
+                      "label": "Customer type",
+                      "toggle_hint": "Use custom value",
+                      "hint": "Allowed vaalues are: not_validated, valid, partially_valid, invalid"
+                    },
+                    "hint": "The address verification status.",
+                    "optional": true,
+                    "type": "string",
+                    "name": "validation_status"
+                  }
+                ],
+                "label": "Billing address",
+                "optional": true,
+                "type": "object",
+                "name": "billing_address"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "name": "next_offset",
+            "control_type": "text",
+            "label": "Next offset",
+            "optional": true
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "type": "number",
+            "name": "include_deleted",
+            "control_type": "checkbox",
+            "label": "Include deleted",
+            "sticky": true,
+            "optional": true,
+            "toggle_hint": "Select from list",
+            "toggle_field": {
+              "name": "include_deleted",
+              "label": "Include deleted",
+              "optional": true,
+              "sticky": true,
+              "type": "string",
+              "control_type": "text",
+              "render_input": "boolean_conversion",
+              "toggle_hint": "Use custom value",
+              "hint": "Allowed values are: true, false."
+            },
+            "render_input": "boolean_conversion",
+            "parse_output": "float_conversion"
+          },
+          {
+            "type": "object",
+            "name": "customer_id",
+            "label": "Customer ID",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "id_string_field_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'starts_with', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "text",
+                "label": "Value",
+                "sticky": true,
+                "hint": "Use comma(',') separated value for 'in' and 'not_in' operator. e.g. value1,value2",
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "id",
+            "label": "ID",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "id_string_field_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'starts_with', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "text",
+                "label": "Value",
+                "sticky": true,
+                "hint": "Use comma(',') separated value for 'in' and 'not_in' operator. e.g. value1,value2",
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "updated_at",
+            "label": "Updated at",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "timestamp_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'after', 'before', 'on', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "date_time",
+                "label": "From",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.updated_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "from"
+              },
+              {
+                "control_type": "date_time",
+                "label": "To",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.updated_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "to"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Value",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.updated_at.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "integer",
+            "name": "limit",
+            "control_type": "integer",
+            "label": "Limit",
+            "hint": "The number of resources to be returned. Default value is 10 and Maximum is 100",
+            "optional": true,
+            "render_input": "integer_conversion",
+            "parse_output": "integer_conversion"
+          },
+          {
+            "type": "string",
+            "name": "offset",
+            "control_type": "text",
+            "label": "Offset",
+            "hint": "Determines your position in the list for pagination. To ensure that the next page is retrieved correctly, always set offset to the value of next_offset obtained in the previous iteration of the API call.",
+            "optional": true
+          },
+          {
+            "type": "object",
+            "name": "recurring",
+            "label": "Recurring",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "boolean_filter_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values is 'is'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "render_input": "boolean_conversion",
+                "toggle_hint": "Select from list",
+                "sticky": true,
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "render_input": "boolean_conversion",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are: true, false."
+                },
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "subscription_id",
+            "label": "Subscription ID",
+            "hint": "The display name used in web interface for identifying the subscription.",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "subscription_id_string_field_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'starts_with', 'is_present', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "text",
+                "label": "Value",
+                "sticky": true,
+                "hint": "Use comma(',') separated value for 'in' and 'not_in' operator. e.g. value1,value2",
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "price_type",
+            "label": "Price type",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "period_string_field_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "multiselect",
+                "label": "Value",
+                "ngIf": "input.price_type.operator == \"in\" || input.price_type.operator == \"not_in\"",
+                "sticky": true,
+                "pick_list": "price_type",
+                "delimiter": ",",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'tax_exclusive', 'tax_inclusive'. Multiple values can be seperated using comma(','). e.g. tax_inclusive,tax_exclusive"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              },
+              {
+                "control_type": "select",
+                "label": "Value",
+                "ngIf": "!(input.price_type.operator == \"in\" || input.price_type.operator == \"not_in\")",
+                "sticky": true,
+                "pick_list": "price_type",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'tax_exclusive', 'tax_inclusive'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "date",
+            "label": "Date",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "timestamp_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'after', 'between', 'on', 'before'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "date_time",
+                "label": "From",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.date.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "from"
+              },
+              {
+                "control_type": "date_time",
+                "label": "To",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.date.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "to"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Value",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.date.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "status",
+            "label": "Status",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "period_string_field_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "multiselect",
+                "label": "Value",
+                "ngIf": "input.status.operator == \"in\" || input.status.operator == \"not_in\"",
+                "sticky": true,
+                "pick_list": "invoice_status",
+                "delimiter": ",",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'paid', 'posted', 'payment_due', 'not_paid', 'voided', 'pending'. Multiple values can be seperated using comma(','). e.g. paid,posted"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              },
+              {
+                "control_type": "select",
+                "label": "Value",
+                "ngIf": "!(input.status.operator == \"in\" || input.status.operator == \"not_in\")",
+                "sticky": true,
+                "pick_list": "invoice_status",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'paid', 'posted', 'payment_due', 'not_paid', 'voided', 'pending'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "paid_at",
+            "label": "Paid at",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "timestamp_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'after', 'between', 'on', 'before'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "date_time",
+                "label": "From",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.paid_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "from"
+              },
+              {
+                "control_type": "date_time",
+                "label": "To",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.paid_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "to"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Value",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.paid_at.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "total",
+            "label": "Total",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "number_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'lt', 'lte', 'gt', 'gte', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "number",
+                "label": "From",
+                "parse_output": "float_conversion",
+                "ngIf": "input.total.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "from"
+              },
+              {
+                "control_type": "number",
+                "label": "To",
+                "parse_output": "float_conversion",
+                "ngIf": "input.total.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "to"
+              },
+              {
+                "control_type": "number",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "ngIf": "input.total.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "amount_paid",
+            "label": "Amount paid",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "number_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'lt', 'lte', 'gt', 'gte', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "number",
+                "label": "From",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_paid.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "from"
+              },
+              {
+                "control_type": "number",
+                "label": "To",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_paid.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "to"
+              },
+              {
+                "control_type": "number",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_paid.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "amount_adjusted",
+            "label": "Amount adjusted",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "number_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'lt', 'lte', 'gt', 'gte', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "number",
+                "label": "From",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_adjusted.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "from"
+              },
+              {
+                "control_type": "number",
+                "label": "To",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_adjusted.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "to"
+              },
+              {
+                "control_type": "number",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_adjusted.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "credits_applied",
+            "label": "Credits applied",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "number_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'lt', 'lte', 'gt', 'gte', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "number",
+                "label": "From",
+                "parse_output": "float_conversion",
+                "ngIf": "input.credits_applied.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "from"
+              },
+              {
+                "control_type": "number",
+                "label": "To",
+                "parse_output": "float_conversion",
+                "ngIf": "input.credits_applied.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "to"
+              },
+              {
+                "control_type": "number",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "ngIf": "input.credits_applied.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "amount_due",
+            "label": "Amount due",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "number_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'lt', 'lte', 'gt', 'gte', 'between'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "number",
+                "label": "From",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_due.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "from"
+              },
+              {
+                "control_type": "number",
+                "label": "To",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_due.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "to"
+              },
+              {
+                "control_type": "number",
+                "label": "Value",
+                "parse_output": "float_conversion",
+                "ngIf": "input.amount_due.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "number",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "dunning_status",
+            "label": "Dunning status",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "dunning_string_field_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'is_present', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "multiselect",
+                "label": "Value",
+                "ngIf": "input.dunning_status.operator == \"in\" || input.dunning_status.operator == \"not_in\"",
+                "sticky": true,
+                "pick_list": "dunning_status_value",
+                "delimiter": ",",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'in_progress', 'exhausted', 'stopped', 'success'. Multiple values can be seperated using comma(','). e.g. in_progress,stopped"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              },
+              {
+                "control_type": "select",
+                "label": "Value",
+                "ngIf": "!(input.dunning_status.operator == \"in\" || input.dunning_status.operator == \"not_in\")",
+                "sticky": true,
+                "pick_list": "dunning_status_value",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Value",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'in_progress', 'exhausted', 'stopped', 'success'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "payment_owner",
+            "label": "Payment owner",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "id_string_field_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'starts_with', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "text",
+                "label": "Value",
+                "sticky": true,
+                "hint": "Use comma(',') separated value for 'in' and 'not_in' operator. e.g. value1,value2",
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "voided_at",
+            "label": "Voided at",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "timestamp_filter_types",
+                "extends_schema": true,
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "extends_schema": true,
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'after', 'between', 'on', 'before'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "date_time",
+                "label": "From",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.voided_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "from"
+              },
+              {
+                "control_type": "date_time",
+                "label": "To",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.voided_at.operator == \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "to"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Value",
+                "render_input": "render_epoch_time",
+                "parse_output": "render_iso8601_timestamp",
+                "ngIf": "input.voided_at.operator != \"between\"",
+                "sticky": true,
+                "optional": true,
+                "type": "date_time",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "void_reason_code",
+            "label": "Void reason code",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Operator",
+                "sticky": true,
+                "pick_list": "id_string_field_types",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "operator",
+                  "label": "Operator",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'is', 'is_not', 'starts_with', 'in', 'not_in'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "operator"
+              },
+              {
+                "control_type": "text",
+                "label": "Value",
+                "sticky": true,
+                "hint": "Use comma(',') separated value for 'in' and 'not_in' operator. e.g. value1,value2",
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "sort_by",
+            "label": "Sort by",
+            "sticky": true,
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Attribute",
+                "sticky": true,
+                "pick_list": "invoice_attribute_list",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "value",
+                  "label": "Attribute",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'date', 'updated_at'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "value"
+              },
+              {
+                "control_type": "select",
+                "label": "Sort order",
+                "sticky": true,
+                "pick_list": "sort_order_list",
+                "toggle_hint": "Select from list",
+                "toggle_field": {
+                  "name": "sort_order",
+                  "label": "Sort order",
+                  "optional": true,
+                  "sticky": true,
+                  "type": "string",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "hint": "Allowed values are 'asc', 'desc'"
+                },
+                "optional": true,
+                "type": "string",
+                "name": "sort_order"
+              }
+            ]
+          }
+        ],
+        "uuid": "492bd2bd-f1b9-4d5b-be6a-4c76ddb192a1"
+      },
+      {
+        "number": 2,
+        "provider": "workflow",
+        "name": "GetApproval",
+        "as": "9e44cf80",
+        "title": null,
+        "description": null,
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+          "due_in_days": true
+        },
+        "input": {
+          "due_in_days": "1",
+          "title": "Approval",
+          "document": "https://workatotest-test.chargebee.com/d/invoices/#{_('data.new_connector_2_connector_374775_1631095272.e3437789.invoices.first.id')}",
+          "requester_id": "7416",
+          "approver_ids": "7417"
+        },
+        "uuid": "4b22f0bb-6c79-4f1e-a314-1a5a37e03057"
+      },
+      {
+        "number": 3,
+        "provider": "rest",
+        "name": "make_request_v2",
+        "as": "37d2f065",
+        "title": null,
+        "description": "<span class=\"provider\">Send request</span> via <span class=\"provider\">HTTP</span>",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+          "response.ignore_http_errors": true
+        },
+        "input": {
+          "request_name": "Send request",
+          "request": {
+            "method": "POST",
+            "content_type": "application/json",
+            "url": "https://workatotest-test.chargebee.com/api/v1/invoices/#{_('data.slack_bot.1007635c.parameters.invoiceid')}/collect"
+          },
+          "response": {
+            "output_type": "json",
+            "expected_encoding": "UTF-8",
+            "ignore_http_errors": "false"
+          }
+        },
+        "extended_output_schema": [
+          {
+            "type": "object",
+            "name": "headers",
+            "label": "Headers",
+            "properties": [
+
+            ]
+          },
+          {
+            "type": "object",
+            "name": "response",
+            "label": "Response",
+            "properties": [
+
+            ]
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "type": "object",
+            "name": "response",
+            "label": "Response",
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Response content type",
+                "pick_list": [
+                  [
+                    "Text",
+                    "rawdatatxt"
+                  ],
+                  [
+                    "Binary",
+                    "rawdata"
+                  ],
+                  [
+                    "JSON",
+                    "json"
+                  ],
+                  [
+                    "XML",
+                    "xml2"
+                  ]
+                ],
+                "hint": "Select expected format of data response type, e.g. JSON or XML. <a href=\"https://docs.workato.com/developing-connectors/http.html#response-type\" target=\"_blank\">Learn more</a>",
+                "default": "json",
+                "extends_schema": true,
+                "type": "string",
+                "name": "output_type"
+              },
+              {
+                "control_type": "select",
+                "label": "Encoding",
+                "pick_list": [
+                  [
+                    "UTF-8",
+                    "UTF-8"
+                  ],
+                  [
+                    "US-ASCII",
+                    "US-ASCII"
+                  ],
+                  [
+                    "UTF-16BE",
+                    "UTF-16BE"
+                  ],
+                  [
+                    "UTF-16LE",
+                    "UTF-16LE"
+                  ],
+                  [
+                    "UTF-32BE",
+                    "UTF-32BE"
+                  ],
+                  [
+                    "UTF-32LE",
+                    "UTF-32LE"
+                  ],
+                  [
+                    "UTF-16",
+                    "UTF-16"
+                  ],
+                  [
+                    "UTF-32",
+                    "UTF-32"
+                  ],
+                  [
+                    "UTF8-MAC",
+                    "UTF8-MAC"
+                  ],
+                  [
+                    "EUC-JP",
+                    "EUC-JP"
+                  ],
+                  [
+                    "Windows-31J",
+                    "Windows-31J"
+                  ],
+                  [
+                    "Big5",
+                    "Big5"
+                  ],
+                  [
+                    "Big5-HKSCS",
+                    "Big5-HKSCS"
+                  ],
+                  [
+                    "Big5-UAO",
+                    "Big5-UAO"
+                  ],
+                  [
+                    "CP949",
+                    "CP949"
+                  ],
+                  [
+                    "Emacs-Mule",
+                    "Emacs-Mule"
+                  ],
+                  [
+                    "EUC-KR",
+                    "EUC-KR"
+                  ],
+                  [
+                    "EUC-TW",
+                    "EUC-TW"
+                  ],
+                  [
+                    "GB2312",
+                    "GB2312"
+                  ],
+                  [
+                    "GB18030",
+                    "GB18030"
+                  ],
+                  [
+                    "GBK",
+                    "GBK"
+                  ],
+                  [
+                    "ISO-8859-1",
+                    "ISO-8859-1"
+                  ],
+                  [
+                    "ISO-8859-2",
+                    "ISO-8859-2"
+                  ],
+                  [
+                    "ISO-8859-3",
+                    "ISO-8859-3"
+                  ],
+                  [
+                    "ISO-8859-4",
+                    "ISO-8859-4"
+                  ],
+                  [
+                    "ISO-8859-5",
+                    "ISO-8859-5"
+                  ],
+                  [
+                    "ISO-8859-6",
+                    "ISO-8859-6"
+                  ],
+                  [
+                    "ISO-8859-7",
+                    "ISO-8859-7"
+                  ],
+                  [
+                    "ISO-8859-8",
+                    "ISO-8859-8"
+                  ],
+                  [
+                    "ISO-8859-9",
+                    "ISO-8859-9"
+                  ],
+                  [
+                    "ISO-8859-10",
+                    "ISO-8859-10"
+                  ],
+                  [
+                    "ISO-8859-11",
+                    "ISO-8859-11"
+                  ],
+                  [
+                    "ISO-8859-13",
+                    "ISO-8859-13"
+                  ],
+                  [
+                    "ISO-8859-14",
+                    "ISO-8859-14"
+                  ],
+                  [
+                    "ISO-8859-15",
+                    "ISO-8859-15"
+                  ],
+                  [
+                    "ISO-8859-16",
+                    "ISO-8859-16"
+                  ],
+                  [
+                    "KOI8-R",
+                    "KOI8-R"
+                  ],
+                  [
+                    "KOI8-U",
+                    "KOI8-U"
+                  ],
+                  [
+                    "Shift_JIS",
+                    "Shift_JIS"
+                  ],
+                  [
+                    "Windows-1250",
+                    "Windows-1250"
+                  ],
+                  [
+                    "Windows-1251",
+                    "Windows-1251"
+                  ],
+                  [
+                    "Windows-1252",
+                    "Windows-1252"
+                  ],
+                  [
+                    "Windows-1253",
+                    "Windows-1253"
+                  ],
+                  [
+                    "Windows-1254",
+                    "Windows-1254"
+                  ],
+                  [
+                    "Windows-1257",
+                    "Windows-1257"
+                  ],
+                  [
+                    "IBM437",
+                    "IBM437"
+                  ],
+                  [
+                    "IBM737",
+                    "IBM737"
+                  ],
+                  [
+                    "IBM775",
+                    "IBM775"
+                  ],
+                  [
+                    "CP850",
+                    "CP850"
+                  ],
+                  [
+                    "IBM852",
+                    "IBM852"
+                  ],
+                  [
+                    "CP852",
+                    "CP852"
+                  ],
+                  [
+                    "IBM855",
+                    "IBM855"
+                  ],
+                  [
+                    "CP855",
+                    "CP855"
+                  ],
+                  [
+                    "IBM857",
+                    "IBM857"
+                  ],
+                  [
+                    "IBM860",
+                    "IBM860"
+                  ],
+                  [
+                    "IBM861",
+                    "IBM861"
+                  ],
+                  [
+                    "IBM862",
+                    "IBM862"
+                  ],
+                  [
+                    "IBM863",
+                    "IBM863"
+                  ],
+                  [
+                    "IBM864",
+                    "IBM864"
+                  ],
+                  [
+                    "IBM865",
+                    "IBM865"
+                  ],
+                  [
+                    "IBM866",
+                    "IBM866"
+                  ],
+                  [
+                    "IBM869",
+                    "IBM869"
+                  ],
+                  [
+                    "Windows-1258",
+                    "Windows-1258"
+                  ],
+                  [
+                    "GB1988",
+                    "GB1988"
+                  ],
+                  [
+                    "macCentEuro",
+                    "macCentEuro"
+                  ],
+                  [
+                    "macCroatian",
+                    "macCroatian"
+                  ],
+                  [
+                    "macCyrillic",
+                    "macCyrillic"
+                  ],
+                  [
+                    "macGreek",
+                    "macGreek"
+                  ],
+                  [
+                    "macIceland",
+                    "macIceland"
+                  ],
+                  [
+                    "macRoman",
+                    "macRoman"
+                  ],
+                  [
+                    "macRomania",
+                    "macRomania"
+                  ],
+                  [
+                    "macThai",
+                    "macThai"
+                  ],
+                  [
+                    "macTurkish",
+                    "macTurkish"
+                  ],
+                  [
+                    "macUkraine",
+                    "macUkraine"
+                  ],
+                  [
+                    "CP950",
+                    "CP950"
+                  ],
+                  [
+                    "CP951",
+                    "CP951"
+                  ],
+                  [
+                    "IBM037",
+                    "IBM037"
+                  ],
+                  [
+                    "stateless-ISO-2022-JP",
+                    "stateless-ISO-2022-JP"
+                  ],
+                  [
+                    "eucJP-ms",
+                    "eucJP-ms"
+                  ],
+                  [
+                    "CP51932",
+                    "CP51932"
+                  ],
+                  [
+                    "EUC-JIS-2004",
+                    "EUC-JIS-2004"
+                  ],
+                  [
+                    "GB12345",
+                    "GB12345"
+                  ],
+                  [
+                    "ISO-2022-JP",
+                    "ISO-2022-JP"
+                  ],
+                  [
+                    "ISO-2022-JP-2",
+                    "ISO-2022-JP-2"
+                  ],
+                  [
+                    "CP50220",
+                    "CP50220"
+                  ],
+                  [
+                    "CP50221",
+                    "CP50221"
+                  ],
+                  [
+                    "Windows-1256",
+                    "Windows-1256"
+                  ],
+                  [
+                    "Windows-1255",
+                    "Windows-1255"
+                  ],
+                  [
+                    "TIS-620",
+                    "TIS-620"
+                  ],
+                  [
+                    "Windows-874",
+                    "Windows-874"
+                  ],
+                  [
+                    "MacJapanese",
+                    "MacJapanese"
+                  ],
+                  [
+                    "UTF-7",
+                    "UTF-7"
+                  ],
+                  [
+                    "UTF8-DoCoMo",
+                    "UTF8-DoCoMo"
+                  ],
+                  [
+                    "SJIS-DoCoMo",
+                    "SJIS-DoCoMo"
+                  ],
+                  [
+                    "UTF8-KDDI",
+                    "UTF8-KDDI"
+                  ],
+                  [
+                    "SJIS-KDDI",
+                    "SJIS-KDDI"
+                  ],
+                  [
+                    "ISO-2022-JP-KDDI",
+                    "ISO-2022-JP-KDDI"
+                  ],
+                  [
+                    "stateless-ISO-2022-JP-KDDI",
+                    "stateless-ISO-2022-JP-KDDI"
+                  ],
+                  [
+                    "UTF8-SoftBank",
+                    "UTF8-SoftBank"
+                  ],
+                  [
+                    "SJIS-SoftBank",
+                    "SJIS-SoftBank"
+                  ]
+                ],
+                "optional": true,
+                "default": "UTF-8",
+                "hint": "Default encoding type is set to UTF-8, and typically doesn't need to be changed. <a href=\"https://docs.workato.com/developing-connectors/http.html#expected-encoding\" target=\"_blank\">Learn more</a>",
+                "type": "string",
+                "name": "expected_encoding"
+              },
+              {
+                "control_type": "schema-designer",
+                "label": "Response schema",
+                "sample_data_type": "json_http",
+                "extends_schema": true,
+                "empty_schema_title": "Describe all fields in your response.",
+                "optional": true,
+                "sticky": true,
+                "type": "string",
+                "name": "response_schema"
+              },
+              {
+                "control_type": "schema-designer",
+                "label": "HTTP response headers",
+                "extends_schema": true,
+                "empty_schema_title": "Describe all the response headers",
+                "optional": true,
+                "sticky": true,
+                "type": "string",
+                "name": "headers_schema"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Mark non-2xx response codes as success?",
+                "render_input": {
+                },
+                "parse_output": {
+                },
+                "toggle_hint": "Select from option list",
+                "toggle_field": {
+                  "label": "Mark non-2xx response codes as success?",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "default": false,
+                  "hint": "If <b>yes</b>, non 2xx response codes returned will be marked as a successful action. If <b>no</b>, non 2xx response codes returned will be marked as an error.",
+                  "optional": true,
+                  "type": "boolean",
+                  "name": "ignore_http_errors"
+                },
+                "default": "false",
+                "hint": "If <b>yes</b>, non 2xx response codes returned will be marked as a successful action. If <b>no</b>, non 2xx response codes returned will be marked as an error.",
+                "optional": true,
+                "type": "boolean",
+                "name": "ignore_http_errors"
+              }
+            ],
+            "override": true
+          }
+        ],
+        "uuid": "48c343b6-7a3f-4ca3-8179-71007a4d7c91",
+        "wizardFinished": true,
+        "skip": true
+      },
+      {
+        "number": 4,
+        "provider": "slack_bot",
+        "name": "post_bot_reply_v2",
+        "as": "f8fc5ffe",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "text": "Invoice Approved"
+        },
+        "uuid": "82eb4212-0ca0-4b8e-a615-4bc3f355de82"
+      }
+    ],
+    "uuid": "0ea414dc-4c41-4a43-bf6b-4e7ae88babda"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "slack_bot",
+      "account_id": {
+        "zip_name": "Training/my_workbot_for_slack_account.connection.json",
+        "name": "My Workbot  for  Slack account",
+        "folder": "Training"
+      },
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "rest",
+      "account_id": {
+        "zip_name": "workatotest_chargebee_account.connection.json",
+        "name": "Workatotest Chargebee Account",
+        "folder": ""
+      },
+      "skip_validation": true
+    },
+    {
+      "keyword": "application",
+      "provider": "workflow",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "new_connector_2_connector_374775_1631095272",
+      "account_id": {
+        "zip_name": "my_second_chargebee_account.connection.json",
+        "name": "My second Chargebee account",
+        "folder": "",
+        "custom": true
+      },
+      "skip_validation": false
+    }
+  ]
+}

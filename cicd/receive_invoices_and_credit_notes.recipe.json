@@ -1,0 +1,853 @@
+{
+  "name": "Receive Invoices and Credit Notes",
+  "description": "When there is a trigger event, do action",
+  "version": 9,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "clock",
+    "name": "scheduled_event",
+    "as": "b03dd280",
+    "title": null,
+    "description": "<span class=\"provider\">Trigger</span> on a <span class=\"provider\">specified schedule</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "time_unit": "minutes",
+      "trigger_every": "5"
+    },
+    "extended_input_schema": [
+      {
+        "type": "string",
+        "name": "trigger_every",
+        "control_type": "integer",
+        "label": "Trigger every",
+        "hint": "Define repeating schedule. Enter whole numbers only.\n                        This field can be set to a minimum of 5 minutes.",
+        "default": "5",
+        "optional": false,
+        "extends_schema": true
+      },
+      {
+        "type": "date_time",
+        "name": "start_after",
+        "control_type": "date_time",
+        "label": "Start after",
+        "hint": "Set date and time to start or leave blank to start immediately. <b>Once recipe has been run or tested, value cannot be changed.</b>",
+        "optional": true,
+        "extends_schema": true,
+        "since_field": true,
+        "render_input": "date_time_conversion",
+        "parse_output": "date_time_conversion"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "workato_variable",
+        "name": "declare_variable",
+        "as": "6766045b",
+        "title": "  Create variable CreatedDate",
+        "description": "Create variable <span class=\"provider\">CreatedDate</span>",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "variables": {
+            "schema": "[{\"control_type\":\"integer\",\"label\":\"CreatedDate\",\"parse_output\":\"integer_conversion\",\"name\":\"created_date\",\"type\":\"integer\",\"optional\":true}]",
+            "data": {
+              "created_date": "=5.minutes.ago.to_i"
+            }
+          }
+        },
+        "extended_output_schema": [
+          {
+            "type": "integer",
+            "name": "created_date",
+            "control_type": "integer",
+            "label": "CreatedDate",
+            "optional": true,
+            "parse_output": "integer_conversion"
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "type": "object",
+            "name": "variables",
+            "control_type": "form-schema-builder",
+            "label": "Variables",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Schema",
+                "extends_schema": true,
+                "broadcast_change_event": true,
+                "type": "string",
+                "name": "schema"
+              },
+              {
+                "properties": [
+                  {
+                    "control_type": "integer",
+                    "label": "CreatedDate",
+                    "parse_output": "integer_conversion",
+                    "name": "created_date",
+                    "type": "integer",
+                    "optional": true,
+                    "hint": "Defaults to nil if not supplied.",
+                    "sticky": true
+                  }
+                ],
+                "label": "Data",
+                "type": "object",
+                "name": "data"
+              }
+            ],
+            "exclude_fields": [
+              "hint"
+            ]
+          }
+        ],
+        "visible_config_fields": [
+          "variables.data.created_date"
+        ],
+        "uuid": "33d1b8ca-77ff-403b-b8c5-a71ca236e39a"
+      },
+      {
+        "number": 2,
+        "provider": "rest",
+        "name": "make_request_v2",
+        "as": "c573c98b",
+        "title": null,
+        "description": "<span class=\"provider\">Send request</span> via <span class=\"provider\">HTTP</span>",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+          "response.ignore_http_errors": true
+        },
+        "input": {
+          "request_name": "Send request",
+          "request": {
+            "method": "GET",
+            "content_type": "application/json",
+            "url": "https://workatotest-test.chargebee.com/api/v2/comments?sort_by[asc]=created_at&created_at[after]=#{_('data.workato_variable.6766045b.created_date')}",
+            "parameters": [
+              {
+              }
+            ]
+          },
+          "response": {
+            "output_type": "json",
+            "expected_encoding": "UTF-8",
+            "ignore_http_errors": "false",
+            "response_schema": "[{\"name\":\"list\",\"type\":\"array\",\"of\":\"object\",\"label\":\"List\",\"properties\":[{\"properties\":[{\"control_type\":\"text\",\"label\":\"ID\",\"type\":\"string\",\"name\":\"id\"},{\"control_type\":\"text\",\"label\":\"Entity type\",\"type\":\"string\",\"name\":\"entity_type\"},{\"control_type\":\"text\",\"label\":\"Entity ID\",\"type\":\"string\",\"name\":\"entity_id\"},{\"control_type\":\"text\",\"label\":\"Notes\",\"type\":\"string\",\"name\":\"notes\"},{\"control_type\":\"text\",\"label\":\"Added by\",\"type\":\"string\",\"name\":\"added_by\"},{\"control_type\":\"number\",\"label\":\"Created at\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"created_at\"},{\"control_type\":\"text\",\"label\":\"Type\",\"type\":\"string\",\"name\":\"type\"},{\"control_type\":\"text\",\"label\":\"Object\",\"type\":\"string\",\"name\":\"object\"}],\"label\":\"Comment\",\"type\":\"object\",\"name\":\"comment\"}]}]"
+          }
+        },
+        "extended_output_schema": [
+          {
+            "type": "object",
+            "name": "headers",
+            "label": "Headers",
+            "properties": [
+
+            ]
+          },
+          {
+            "type": "object",
+            "name": "response",
+            "label": "Response",
+            "properties": [
+              {
+                "name": "list",
+                "type": "array",
+                "of": "object",
+                "label": "List",
+                "properties": [
+                  {
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "ID",
+                        "type": "string",
+                        "name": "id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Entity type",
+                        "type": "string",
+                        "name": "entity_type"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Entity ID",
+                        "type": "string",
+                        "name": "entity_id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Notes",
+                        "type": "string",
+                        "name": "notes"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Added by",
+                        "type": "string",
+                        "name": "added_by"
+                      },
+                      {
+                        "control_type": "number",
+                        "label": "Created at",
+                        "parse_output": "float_conversion",
+                        "type": "number",
+                        "name": "created_at"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Type",
+                        "type": "string",
+                        "name": "type"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Object",
+                        "type": "string",
+                        "name": "object"
+                      }
+                    ],
+                    "label": "Comment",
+                    "type": "object",
+                    "name": "comment"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "type": "object",
+            "name": "response",
+            "label": "Response",
+            "properties": [
+              {
+                "control_type": "select",
+                "label": "Response content type",
+                "pick_list": [
+                  [
+                    "Text",
+                    "rawdatatxt"
+                  ],
+                  [
+                    "Binary",
+                    "rawdata"
+                  ],
+                  [
+                    "JSON",
+                    "json"
+                  ],
+                  [
+                    "XML",
+                    "xml2"
+                  ]
+                ],
+                "hint": "Select expected format of data response type, e.g. JSON or XML. <a href=\"https://docs.workato.com/developing-connectors/http.html#response-type\" target=\"_blank\">Learn more</a>",
+                "default": "json",
+                "extends_schema": true,
+                "type": "string",
+                "name": "output_type"
+              },
+              {
+                "control_type": "select",
+                "label": "Encoding",
+                "pick_list": [
+                  [
+                    "UTF-8",
+                    "UTF-8"
+                  ],
+                  [
+                    "US-ASCII",
+                    "US-ASCII"
+                  ],
+                  [
+                    "UTF-16BE",
+                    "UTF-16BE"
+                  ],
+                  [
+                    "UTF-16LE",
+                    "UTF-16LE"
+                  ],
+                  [
+                    "UTF-32BE",
+                    "UTF-32BE"
+                  ],
+                  [
+                    "UTF-32LE",
+                    "UTF-32LE"
+                  ],
+                  [
+                    "UTF-16",
+                    "UTF-16"
+                  ],
+                  [
+                    "UTF-32",
+                    "UTF-32"
+                  ],
+                  [
+                    "UTF8-MAC",
+                    "UTF8-MAC"
+                  ],
+                  [
+                    "EUC-JP",
+                    "EUC-JP"
+                  ],
+                  [
+                    "Windows-31J",
+                    "Windows-31J"
+                  ],
+                  [
+                    "Big5",
+                    "Big5"
+                  ],
+                  [
+                    "Big5-HKSCS",
+                    "Big5-HKSCS"
+                  ],
+                  [
+                    "Big5-UAO",
+                    "Big5-UAO"
+                  ],
+                  [
+                    "CP949",
+                    "CP949"
+                  ],
+                  [
+                    "Emacs-Mule",
+                    "Emacs-Mule"
+                  ],
+                  [
+                    "EUC-KR",
+                    "EUC-KR"
+                  ],
+                  [
+                    "EUC-TW",
+                    "EUC-TW"
+                  ],
+                  [
+                    "GB2312",
+                    "GB2312"
+                  ],
+                  [
+                    "GB18030",
+                    "GB18030"
+                  ],
+                  [
+                    "GBK",
+                    "GBK"
+                  ],
+                  [
+                    "ISO-8859-1",
+                    "ISO-8859-1"
+                  ],
+                  [
+                    "ISO-8859-2",
+                    "ISO-8859-2"
+                  ],
+                  [
+                    "ISO-8859-3",
+                    "ISO-8859-3"
+                  ],
+                  [
+                    "ISO-8859-4",
+                    "ISO-8859-4"
+                  ],
+                  [
+                    "ISO-8859-5",
+                    "ISO-8859-5"
+                  ],
+                  [
+                    "ISO-8859-6",
+                    "ISO-8859-6"
+                  ],
+                  [
+                    "ISO-8859-7",
+                    "ISO-8859-7"
+                  ],
+                  [
+                    "ISO-8859-8",
+                    "ISO-8859-8"
+                  ],
+                  [
+                    "ISO-8859-9",
+                    "ISO-8859-9"
+                  ],
+                  [
+                    "ISO-8859-10",
+                    "ISO-8859-10"
+                  ],
+                  [
+                    "ISO-8859-11",
+                    "ISO-8859-11"
+                  ],
+                  [
+                    "ISO-8859-13",
+                    "ISO-8859-13"
+                  ],
+                  [
+                    "ISO-8859-14",
+                    "ISO-8859-14"
+                  ],
+                  [
+                    "ISO-8859-15",
+                    "ISO-8859-15"
+                  ],
+                  [
+                    "ISO-8859-16",
+                    "ISO-8859-16"
+                  ],
+                  [
+                    "KOI8-R",
+                    "KOI8-R"
+                  ],
+                  [
+                    "KOI8-U",
+                    "KOI8-U"
+                  ],
+                  [
+                    "Shift_JIS",
+                    "Shift_JIS"
+                  ],
+                  [
+                    "Windows-1250",
+                    "Windows-1250"
+                  ],
+                  [
+                    "Windows-1251",
+                    "Windows-1251"
+                  ],
+                  [
+                    "Windows-1252",
+                    "Windows-1252"
+                  ],
+                  [
+                    "Windows-1253",
+                    "Windows-1253"
+                  ],
+                  [
+                    "Windows-1254",
+                    "Windows-1254"
+                  ],
+                  [
+                    "Windows-1257",
+                    "Windows-1257"
+                  ],
+                  [
+                    "IBM437",
+                    "IBM437"
+                  ],
+                  [
+                    "IBM737",
+                    "IBM737"
+                  ],
+                  [
+                    "IBM775",
+                    "IBM775"
+                  ],
+                  [
+                    "CP850",
+                    "CP850"
+                  ],
+                  [
+                    "IBM852",
+                    "IBM852"
+                  ],
+                  [
+                    "CP852",
+                    "CP852"
+                  ],
+                  [
+                    "IBM855",
+                    "IBM855"
+                  ],
+                  [
+                    "CP855",
+                    "CP855"
+                  ],
+                  [
+                    "IBM857",
+                    "IBM857"
+                  ],
+                  [
+                    "IBM860",
+                    "IBM860"
+                  ],
+                  [
+                    "IBM861",
+                    "IBM861"
+                  ],
+                  [
+                    "IBM862",
+                    "IBM862"
+                  ],
+                  [
+                    "IBM863",
+                    "IBM863"
+                  ],
+                  [
+                    "IBM864",
+                    "IBM864"
+                  ],
+                  [
+                    "IBM865",
+                    "IBM865"
+                  ],
+                  [
+                    "IBM866",
+                    "IBM866"
+                  ],
+                  [
+                    "IBM869",
+                    "IBM869"
+                  ],
+                  [
+                    "Windows-1258",
+                    "Windows-1258"
+                  ],
+                  [
+                    "GB1988",
+                    "GB1988"
+                  ],
+                  [
+                    "macCentEuro",
+                    "macCentEuro"
+                  ],
+                  [
+                    "macCroatian",
+                    "macCroatian"
+                  ],
+                  [
+                    "macCyrillic",
+                    "macCyrillic"
+                  ],
+                  [
+                    "macGreek",
+                    "macGreek"
+                  ],
+                  [
+                    "macIceland",
+                    "macIceland"
+                  ],
+                  [
+                    "macRoman",
+                    "macRoman"
+                  ],
+                  [
+                    "macRomania",
+                    "macRomania"
+                  ],
+                  [
+                    "macThai",
+                    "macThai"
+                  ],
+                  [
+                    "macTurkish",
+                    "macTurkish"
+                  ],
+                  [
+                    "macUkraine",
+                    "macUkraine"
+                  ],
+                  [
+                    "CP950",
+                    "CP950"
+                  ],
+                  [
+                    "CP951",
+                    "CP951"
+                  ],
+                  [
+                    "IBM037",
+                    "IBM037"
+                  ],
+                  [
+                    "stateless-ISO-2022-JP",
+                    "stateless-ISO-2022-JP"
+                  ],
+                  [
+                    "eucJP-ms",
+                    "eucJP-ms"
+                  ],
+                  [
+                    "CP51932",
+                    "CP51932"
+                  ],
+                  [
+                    "EUC-JIS-2004",
+                    "EUC-JIS-2004"
+                  ],
+                  [
+                    "GB12345",
+                    "GB12345"
+                  ],
+                  [
+                    "ISO-2022-JP",
+                    "ISO-2022-JP"
+                  ],
+                  [
+                    "ISO-2022-JP-2",
+                    "ISO-2022-JP-2"
+                  ],
+                  [
+                    "CP50220",
+                    "CP50220"
+                  ],
+                  [
+                    "CP50221",
+                    "CP50221"
+                  ],
+                  [
+                    "Windows-1256",
+                    "Windows-1256"
+                  ],
+                  [
+                    "Windows-1255",
+                    "Windows-1255"
+                  ],
+                  [
+                    "TIS-620",
+                    "TIS-620"
+                  ],
+                  [
+                    "Windows-874",
+                    "Windows-874"
+                  ],
+                  [
+                    "MacJapanese",
+                    "MacJapanese"
+                  ],
+                  [
+                    "UTF-7",
+                    "UTF-7"
+                  ],
+                  [
+                    "UTF8-DoCoMo",
+                    "UTF8-DoCoMo"
+                  ],
+                  [
+                    "SJIS-DoCoMo",
+                    "SJIS-DoCoMo"
+                  ],
+                  [
+                    "UTF8-KDDI",
+                    "UTF8-KDDI"
+                  ],
+                  [
+                    "SJIS-KDDI",
+                    "SJIS-KDDI"
+                  ],
+                  [
+                    "ISO-2022-JP-KDDI",
+                    "ISO-2022-JP-KDDI"
+                  ],
+                  [
+                    "stateless-ISO-2022-JP-KDDI",
+                    "stateless-ISO-2022-JP-KDDI"
+                  ],
+                  [
+                    "UTF8-SoftBank",
+                    "UTF8-SoftBank"
+                  ],
+                  [
+                    "SJIS-SoftBank",
+                    "SJIS-SoftBank"
+                  ]
+                ],
+                "optional": true,
+                "default": "UTF-8",
+                "hint": "Default encoding type is set to UTF-8, and typically doesn't need to be changed. <a href=\"https://docs.workato.com/developing-connectors/http.html#expected-encoding\" target=\"_blank\">Learn more</a>",
+                "type": "string",
+                "name": "expected_encoding"
+              },
+              {
+                "control_type": "schema-designer",
+                "label": "Response schema",
+                "sample_data_type": "json_http",
+                "extends_schema": true,
+                "empty_schema_title": "Describe all fields in your response.",
+                "optional": true,
+                "sticky": true,
+                "type": "string",
+                "name": "response_schema"
+              },
+              {
+                "control_type": "schema-designer",
+                "label": "HTTP response headers",
+                "extends_schema": true,
+                "empty_schema_title": "Describe all the response headers",
+                "optional": true,
+                "sticky": true,
+                "type": "string",
+                "name": "headers_schema"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Mark non-2xx response codes as success?",
+                "render_input": {
+                },
+                "parse_output": {
+                },
+                "toggle_hint": "Select from option list",
+                "toggle_field": {
+                  "label": "Mark non-2xx response codes as success?",
+                  "control_type": "text",
+                  "toggle_hint": "Use custom value",
+                  "default": false,
+                  "hint": "If <b>yes</b>, non 2xx response codes returned will be marked as a successful action. If <b>no</b>, non 2xx response codes returned will be marked as an error.",
+                  "optional": true,
+                  "type": "boolean",
+                  "name": "ignore_http_errors"
+                },
+                "default": "false",
+                "hint": "If <b>yes</b>, non 2xx response codes returned will be marked as a successful action. If <b>no</b>, non 2xx response codes returned will be marked as an error.",
+                "optional": true,
+                "type": "boolean",
+                "name": "ignore_http_errors"
+              }
+            ],
+            "override": true
+          }
+        ],
+        "uuid": "495a8743-153a-40b0-9a05-f4bb61d53456",
+        "wizardFinished": true
+      },
+      {
+        "number": 3,
+        "as": "f0df4909",
+        "keyword": "foreach",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "repeat_mode": "simple",
+        "clear_scope": "false",
+        "input": {
+        },
+        "block": [
+          {
+            "number": 4,
+            "keyword": "if",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "type": "compound",
+              "operand": "and",
+              "conditions": [
+                {
+                  "operand": "contains",
+                  "lhs": "#{_('data.foreach.f0df4909.comment.entity_type')}",
+                  "rhs": "nvoice",
+                  "uuid": "condition-73be9cb4-1bf9-42eb-bf78-50eff1ae8c4f"
+                }
+              ]
+            },
+            "block": [
+              {
+                "number": 5,
+                "provider": "workato_service",
+                "name": "call_service_async",
+                "as": "5c448e36",
+                "title": null,
+                "description": "Call recipe <span class=\"provider\">invoice</span> (do not wait for response)",
+                "keyword": "action",
+                "dynamicPickListSelection": {
+                  "flow_id": "invoice"
+                },
+                "toggleCfg": {
+                },
+                "input": {
+                  "flow_id": {
+                    "zip_name": "invoiceapproval.recipe.json",
+                    "name": "InvoiceApproval",
+                    "folder": ""
+                  },
+                  "request": {
+                    "invoiceid": "#{_('data.foreach.f0df4909.comment.entity_id')}",
+                    "requestor": "#{_('data.foreach.f0df4909.comment.added_by')}"
+                  }
+                },
+                "extended_input_schema": [
+                  {
+                    "type": "object",
+                    "name": "request",
+                    "label": "Recipe input",
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Invoiceid",
+                        "name": "invoiceid",
+                        "type": "string",
+                        "optional": false
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Requestor",
+                        "name": "requestor",
+                        "type": "string",
+                        "optional": false
+                      }
+                    ]
+                  }
+                ],
+                "uuid": "7cdc4f4e-5d28-4e7c-9472-57628040109c"
+              }
+            ],
+            "uuid": "34c364f3-c7f8-491f-918c-1ae9ac3bd9dd"
+          }
+        ],
+        "source": "#{_('data.rest.c573c98b.response.list')}",
+        "uuid": "af1d71f6-385f-44c8-9c99-844f17b54f5d"
+      }
+    ],
+    "comment": "Prod Version Step 1,2 and 3 will be merged in the SDK",
+    "uuid": "8c537be2-54d4-44ca-a5e1-c8a8b8282552"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "rest",
+      "account_id": {
+        "zip_name": "workatotest_chargebee_account.connection.json",
+        "name": "Workatotest Chargebee Account",
+        "folder": ""
+      },
+      "skip_validation": false
+    },
+    {
+      "keyword": "application",
+      "provider": "workato_variable",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "workato_service",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "clock",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}
