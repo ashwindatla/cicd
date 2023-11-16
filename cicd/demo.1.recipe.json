@@ -1,0 +1,24 @@
+{
+  "name": "Demo",
+  "description": "When there is a trigger event, do action",
+  "version": 1,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+    },
+    "block": [
+
+    ],
+    "uuid": "103084f0-fc74-4b1e-b472-0228764e36ff"
+  },
+  "config": [
+
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "name": "Pending Invoice Generated",
+  "description": "When there is a new event via HTTP webhook, do action",
+  "version": 2,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_webhooks",
+    "name": "new_event",
+    "as": "1f3d838c",
+    "title": null,
+    "description": "<span class=\"provider\">Pendinginvoice</span> via <span class=\"provider\">HTTP webhook</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "request": {
+        "webhook_type": "rawdatatxt",
+        "headers_schema": "[{\"control_type\":\"text\",\"label\":\"Accept encoding\",\"type\":\"string\",\"name\":\"accept_encoding\"},{\"control_type\":\"text\",\"label\":\"Content length\",\"type\":\"string\",\"name\":\"content_length\"},{\"control_type\":\"text\",\"label\":\"Content type\",\"type\":\"string\",\"name\":\"content_type\"},{\"control_type\":\"text\",\"label\":\"User agent\",\"type\":\"string\",\"name\":\"user_agent\"},{\"control_type\":\"text\",\"label\":\"X amzn trace ID\",\"type\":\"string\",\"name\":\"x_amzn_trace_id\"},{\"control_type\":\"text\",\"label\":\"X correlation ID\",\"type\":\"string\",\"name\":\"x_correlation_id\"},{\"control_type\":\"text\",\"label\":\"X forwarded for\",\"type\":\"string\",\"name\":\"x_forwarded_for\"},{\"control_type\":\"text\",\"label\":\"X forwarded port\",\"type\":\"string\",\"name\":\"x_forwarded_port\"},{\"control_type\":\"text\",\"label\":\"X forwarded proto\",\"type\":\"string\",\"name\":\"x_forwarded_proto\"},{\"control_type\":\"text\",\"label\":\"X request ID\",\"type\":\"string\",\"name\":\"x_request_id\"}]"
+      },
+      "webhook_suffix": "pendinginvoice"
+    },
+    "extended_output_schema": [
+      {
+        "type": "object",
+        "name": "headers",
+        "label": "Headers",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Accept encoding",
+            "type": "string",
+            "name": "accept_encoding"
+          },
+          {
+            "control_type": "text",
+            "label": "Content length",
+            "type": "string",
+            "name": "content_length"
+          },
+          {
+            "control_type": "text",
+            "label": "Content type",
+            "type": "string",
+            "name": "content_type"
+          },
+          {
+            "control_type": "text",
+            "label": "User agent",
+            "type": "string",
+            "name": "user_agent"
+          },
+          {
+            "control_type": "text",
+            "label": "X amzn trace ID",
+            "type": "string",
+            "name": "x_amzn_trace_id"
+          },
+          {
+            "control_type": "text",
+            "label": "X correlation ID",
+            "type": "string",
+            "name": "x_correlation_id"
+          },
+          {
+            "control_type": "text",
+            "label": "X forwarded for",
+            "type": "string",
+            "name": "x_forwarded_for"
+          },
+          {
+            "control_type": "text",
+            "label": "X forwarded port",
+            "type": "string",
+            "name": "x_forwarded_port"
+          },
+          {
+            "control_type": "text",
+            "label": "X forwarded proto",
+            "type": "string",
+            "name": "x_forwarded_proto"
+          },
+          {
+            "control_type": "text",
+            "label": "X request ID",
+            "type": "string",
+            "name": "x_request_id"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "name": "payload",
+        "control_type": "text",
+        "label": "Payload"
+      }
+    ],
+    "extended_input_schema": [
+      {
+        "type": "object",
+        "name": "request",
+        "label": "Payload configuration",
+        "properties": [
+          {
+            "control_type": "select",
+            "label": "Webhook type",
+            "pick_list": [
+              [
+                "GET request",
+                "get"
+              ],
+              [
+                "PUT/POST with JSON payload",
+                "json"
+              ],
+              [
+                "PUT/POST with XML payload",
+                "xml"
+              ],
+              [
+                "PUT/POST with FORM encoded payload",
+                "form"
+              ],
+              [
+                "PUT/POST with raw binary data",
+                "rawdata"
+              ],
+              [
+                "PUT/POST with unicode text data",
+                "rawdatatxt"
+              ]
+            ],
+            "hint": "Select the HTTP method and payload data type used by webhook. <a href=\"https://support.workato.com/support/solutions/articles/1000241356-http-real-time-webhook-type\" target=\"_blank\">Learn more</a>",
+            "default": "json",
+            "extends_schema": true,
+            "type": "string",
+            "name": "webhook_type"
+          },
+          {
+            "control_type": "schema-designer",
+            "label": "Headers",
+            "extends_schema": true,
+            "empty_schema_title": "Describe all the webhook headers",
+            "optional": true,
+            "sticky": true,
+            "type": "string",
+            "name": "headers_schema"
+          }
+        ],
+        "override": true
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "logger",
+        "name": "log_message",
+        "as": "edf9ec0c",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+          "message": "#{_('data.workato_webhooks.1f3d838c.payload')}"
+        },
+        "uuid": "7b316450-f97e-4b87-a78f-ea45e3e52688"
+      }
+    ],
+    "uuid": "494fda2c-3cff-4186-bb06-7bf7c0695cd5",
+    "wizardFinished": true
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "workato_webhooks",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "logger",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}
