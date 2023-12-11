@@ -1,0 +1,24 @@
+{
+  "name": "CB <> Revolut <> Coupa",
+  "description": "When there is a trigger event, do action",
+  "version": 1,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+    },
+    "block": [
+
+    ],
+    "uuid": "d4248f3d-b953-47d9-a085-fef75e11236a"
+  },
+  "config": [
+
+  ]
+}

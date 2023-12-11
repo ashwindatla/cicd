@@ -1,0 +1,6 @@
+{
+  "name": "My Coupa account",
+  "provider": "coupa",
+  "secure_gateway_tunnel_name": null,
+  "root_folder": false
+}
