@@ -1,0 +1,1443 @@
+{
+  "name": "Revolut <> Coupa",
+  "description": "When there is a trigger on a specified schedule, do action",
+  "version": 5,
+  "private": true,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "clock",
+    "name": "scheduled_event",
+    "as": "72938937",
+    "title": null,
+    "description": "<span class=\"provider\">Trigger</span> on a <span class=\"provider\">specified schedule</span>",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+    },
+    "toggleCfg": {
+    },
+    "input": {
+      "time_unit": "minutes",
+      "trigger_every": "5"
+    },
+    "extended_input_schema": [
+      {
+        "control_type": "integer",
+        "default": "5",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Define repeating schedule. Enter whole numbers only.\n                        This field can be set to a minimum of 5 minutes.",
+        "label": "Trigger every",
+        "name": "trigger_every",
+        "optional": false,
+        "suffix": {
+          "text": "minutes"
+        },
+        "type": "string"
+      },
+      {
+        "control_type": "date_time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set date and time to start or leave blank to start immediately. <b>Once recipe has been run or tested, value cannot be changed.</b>",
+        "label": "Start after",
+        "name": "start_after",
+        "optional": true,
+        "since_field": true,
+        "type": "date_time",
+        "parse_output": "date_time_conversion",
+        "render_input": "date_time_conversion"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "keyword": "try",
+        "dynamicPickListSelection": {
+        },
+        "toggleCfg": {
+        },
+        "input": {
+        },
+        "block": [
+          {
+            "number": 2,
+            "provider": "new_connector_69_connector_374775_1680178467",
+            "name": "get_accounts",
+            "as": "57132d9e",
+            "title": null,
+            "description": null,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+            },
+            "extended_output_schema": [
+              {
+                "label": "Response",
+                "name": "response",
+                "of": "object",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "ID",
+                    "optional": true,
+                    "type": "string",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "name"
+                  },
+                  {
+                    "control_type": "number",
+                    "label": "Balance",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "balance"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Currency",
+                    "optional": true,
+                    "type": "string",
+                    "name": "currency"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "State",
+                    "optional": true,
+                    "type": "string",
+                    "name": "state"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Public",
+                    "parse_output": {
+                    },
+                    "render_input": {
+                    },
+                    "toggle_hint": "Select from option list",
+                    "toggle_field": {
+                      "label": "Public",
+                      "control_type": "text",
+                      "toggle_hint": "Use custom value",
+                      "type": "boolean",
+                      "name": "public"
+                    },
+                    "optional": true,
+                    "type": "number",
+                    "name": "public"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Created at",
+                    "render_input": "date_time_conversion",
+                    "parse_output": "date_time_conversion",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "created_at"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Updated at",
+                    "render_input": "date_time_conversion",
+                    "parse_output": "date_time_conversion",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "updated_at"
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "uuid": "ecd934c8-c991-4f1b-b24c-1968cdbc1151"
+          },
+          {
+            "number": 3,
+            "provider": "new_connector_69_connector_374775_1680178467",
+            "name": "get_transactions",
+            "as": "e39d4d7d",
+            "mask_data": true,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+            },
+            "uuid": "e3304975-4f43-413c-b2ba-1aa89312bb64"
+          },
+          {
+            "number": 4,
+            "provider": "new_connector_69_connector_374775_1680178467",
+            "name": "get_transactions_id",
+            "as": "2d9629eb",
+            "mask_data": true,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "transactionid": "#{_('data.new_connector_69_connector_374775_1680178467.e39d4d7d.response.first.id')}"
+            },
+            "visible_config_fields": [
+              "transactionid"
+            ],
+            "uuid": "7be9fbef-ccb9-47ce-8db1-625753d2306e"
+          },
+          {
+            "number": 5,
+            "provider": "coupa",
+            "name": "create_object",
+            "as": "2585cb01",
+            "title": null,
+            "description": null,
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "object": "Account"
+            },
+            "toggleCfg": {
+              "object": true,
+              "account_type.id": true,
+              "active": true
+            },
+            "input": {
+              "return_object": "nil",
+              "object": "accounts",
+              "account_type": {
+                "id": "3"
+              },
+              "active": "true",
+              "name": "#{_('data.new_connector_69_connector_374775_1680178467.57132d9e.response.first.name')}#{_('data.new_connector_69_connector_374775_1680178467.2d9629eb.type')}",
+              "account_type_id": "=_('data.new_connector_69_connector_374775_1680178467.2d9629eb.created_at').to_i"
+            },
+            "extended_output_schema": [
+              {
+                "label": "Account type",
+                "name": "account_type",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "number",
+                    "label": "ID",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "name"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Legal entity name",
+                    "optional": true,
+                    "type": "string",
+                    "name": "legal_entity_name"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "number",
+                        "label": "ID",
+                        "parse_output": "integer_conversion",
+                        "optional": true,
+                        "type": "integer",
+                        "name": "id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "name"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Location code",
+                        "optional": true,
+                        "type": "string",
+                        "name": "location_code"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Street 1",
+                        "optional": true,
+                        "type": "string",
+                        "name": "street1"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Street 2",
+                        "optional": true,
+                        "type": "string",
+                        "name": "street2"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Postal code",
+                        "optional": true,
+                        "type": "string",
+                        "name": "postal_code"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "City",
+                        "optional": true,
+                        "type": "string",
+                        "name": "city"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "State",
+                        "optional": true,
+                        "type": "string",
+                        "name": "state"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Attention",
+                        "optional": true,
+                        "type": "string",
+                        "name": "attention"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Business group name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "business_group_name"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Vat number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "vat_number"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Local tax number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "local_tax_number"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "control_type": "number",
+                            "label": "ID",
+                            "parse_output": "integer_conversion",
+                            "optional": true,
+                            "type": "integer",
+                            "name": "id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Code",
+                            "optional": true,
+                            "type": "string",
+                            "name": "code"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Name",
+                            "optional": true,
+                            "type": "string",
+                            "name": "name"
+                          }
+                        ],
+                        "label": "Country",
+                        "optional": true,
+                        "type": "object",
+                        "name": "country"
+                      },
+                      {
+                        "control_type": "date_time",
+                        "label": "Created at",
+                        "render_input": "date_time_conversion",
+                        "parse_output": "date_time_conversion",
+                        "optional": true,
+                        "type": "date_time",
+                        "name": "created_at"
+                      },
+                      {
+                        "control_type": "date_time",
+                        "label": "Updated at",
+                        "render_input": "date_time_conversion",
+                        "parse_output": "date_time_conversion",
+                        "optional": true,
+                        "type": "date_time",
+                        "name": "updated_at"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "control_type": "number",
+                            "label": "ID",
+                            "parse_output": "integer_conversion",
+                            "optional": true,
+                            "type": "integer",
+                            "name": "id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Code",
+                            "optional": true,
+                            "type": "string",
+                            "name": "code"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Name",
+                            "optional": true,
+                            "type": "string",
+                            "name": "name"
+                          }
+                        ],
+                        "label": "Vat country",
+                        "optional": true,
+                        "type": "object",
+                        "name": "vat_country"
+                      },
+                      {
+                        "control_type": "checkbox",
+                        "label": "Active",
+                        "parse_output": "float_conversion",
+                        "optional": true,
+                        "type": "number",
+                        "name": "active"
+                      },
+                      {
+                        "name": "content_groups",
+                        "type": "array",
+                        "of": "object",
+                        "label": "Content groups",
+                        "optional": true,
+                        "properties": [
+                          {
+                            "control_type": "number",
+                            "label": "ID",
+                            "parse_output": "integer_conversion",
+                            "optional": true,
+                            "type": "integer",
+                            "name": "id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Name",
+                            "optional": true,
+                            "type": "string",
+                            "name": "name"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Description",
+                            "optional": true,
+                            "type": "string",
+                            "name": "description"
+                          },
+                          {
+                            "control_type": "date_time",
+                            "label": "Created at",
+                            "render_input": "date_time_conversion",
+                            "parse_output": "date_time_conversion",
+                            "optional": true,
+                            "type": "date_time",
+                            "name": "created_at"
+                          },
+                          {
+                            "control_type": "date_time",
+                            "label": "Updated at",
+                            "render_input": "date_time_conversion",
+                            "parse_output": "date_time_conversion",
+                            "optional": true,
+                            "type": "date_time",
+                            "name": "updated_at"
+                          },
+                          {
+                            "properties": [
+                              {
+                                "control_type": "integer",
+                                "label": "ID",
+                                "parse_output": "integer_conversion",
+                                "optional": true,
+                                "type": "integer",
+                                "name": "id"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Login",
+                                "optional": true,
+                                "type": "string",
+                                "name": "login"
+                              },
+                              {
+                                "control_type": "email",
+                                "label": "Email",
+                                "optional": true,
+                                "type": "string",
+                                "name": "email"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Employee number",
+                                "optional": true,
+                                "type": "string",
+                                "name": "employee_number"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Firstname",
+                                "optional": true,
+                                "type": "string",
+                                "name": "firstname"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Lastname",
+                                "optional": true,
+                                "type": "string",
+                                "name": "lastname"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Fullname",
+                                "optional": true,
+                                "type": "string",
+                                "name": "fullname"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Assignee",
+                                "optional": true,
+                                "type": "string",
+                                "name": "assignee"
+                              }
+                            ],
+                            "label": "Updated by",
+                            "optional": true,
+                            "type": "object",
+                            "name": "updated_by"
+                          }
+                        ]
+                      }
+                    ],
+                    "label": "Primary address",
+                    "optional": true,
+                    "type": "object",
+                    "name": "primary_address"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "number",
+                        "label": "ID",
+                        "parse_output": "integer_conversion",
+                        "optional": true,
+                        "type": "integer",
+                        "name": "id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Code",
+                        "optional": true,
+                        "type": "string",
+                        "name": "code"
+                      },
+                      {
+                        "control_type": "integer",
+                        "label": "Decimals",
+                        "parse_output": "integer_conversion",
+                        "optional": true,
+                        "type": "integer",
+                        "name": "decimals"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "control_type": "integer",
+                            "label": "ID",
+                            "parse_output": "integer_conversion",
+                            "optional": true,
+                            "type": "integer",
+                            "name": "id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Login",
+                            "optional": true,
+                            "type": "string",
+                            "name": "login"
+                          },
+                          {
+                            "control_type": "email",
+                            "label": "Email",
+                            "optional": true,
+                            "type": "string",
+                            "name": "email"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Employee number",
+                            "optional": true,
+                            "type": "string",
+                            "name": "employee_number"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Firstname",
+                            "optional": true,
+                            "type": "string",
+                            "name": "firstname"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Lastname",
+                            "optional": true,
+                            "type": "string",
+                            "name": "lastname"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Fullname",
+                            "optional": true,
+                            "type": "string",
+                            "name": "fullname"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Assignee",
+                            "optional": true,
+                            "type": "string",
+                            "name": "assignee"
+                          }
+                        ],
+                        "label": "Updated by",
+                        "optional": true,
+                        "type": "object",
+                        "name": "updated_by"
+                      }
+                    ],
+                    "label": "Currency",
+                    "optional": true,
+                    "type": "object",
+                    "name": "currency"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Created at",
+                    "render_input": "date_time_conversion",
+                    "parse_output": "date_time_conversion",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "created_at"
+                  },
+                  {
+                    "control_type": "date_time",
+                    "label": "Updated at",
+                    "render_input": "date_time_conversion",
+                    "parse_output": "date_time_conversion",
+                    "optional": true,
+                    "type": "date_time",
+                    "name": "updated_at"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "integer",
+                        "label": "ID",
+                        "parse_output": "integer_conversion",
+                        "optional": true,
+                        "type": "integer",
+                        "name": "id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Login",
+                        "optional": true,
+                        "type": "string",
+                        "name": "login"
+                      },
+                      {
+                        "control_type": "email",
+                        "label": "Email",
+                        "optional": true,
+                        "type": "string",
+                        "name": "email"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Employee number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "employee_number"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Firstname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "firstname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Lastname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "lastname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Fullname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "fullname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Assignee",
+                        "optional": true,
+                        "type": "string",
+                        "name": "assignee"
+                      }
+                    ],
+                    "label": "Created by",
+                    "optional": true,
+                    "type": "object",
+                    "name": "created_by"
+                  },
+                  {
+                    "properties": [
+                      {
+                        "control_type": "integer",
+                        "label": "ID",
+                        "parse_output": "integer_conversion",
+                        "optional": true,
+                        "type": "integer",
+                        "name": "id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Login",
+                        "optional": true,
+                        "type": "string",
+                        "name": "login"
+                      },
+                      {
+                        "control_type": "email",
+                        "label": "Email",
+                        "optional": true,
+                        "type": "string",
+                        "name": "email"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Employee number",
+                        "optional": true,
+                        "type": "string",
+                        "name": "employee_number"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Firstname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "firstname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Lastname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "lastname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Fullname",
+                        "optional": true,
+                        "type": "string",
+                        "name": "fullname"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Assignee",
+                        "optional": true,
+                        "type": "string",
+                        "name": "assignee"
+                      }
+                    ],
+                    "label": "Updated by",
+                    "optional": true,
+                    "type": "object",
+                    "name": "updated_by"
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Active",
+                    "parse_output": "float_conversion",
+                    "optional": true,
+                    "type": "number",
+                    "name": "active"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Active",
+                "name": "active",
+                "optional": true,
+                "toggle_field": {
+                  "name": "active",
+                  "control_type": "text",
+                  "label": "Active",
+                  "type": "string",
+                  "optional": true,
+                  "hint": "Accepted values are <b>true</b> or <b>false</b>.",
+                  "toggle_hint": "Enter custom value"
+                },
+                "toggle_hint": "Select from list",
+                "type": "number",
+                "parse_output": "float_conversion"
+              },
+              {
+                "control_type": "date_time",
+                "hint": "Automatically created by Coupa in the format YYYY-MM-DDTHH:MM:SS+HH:MMZ",
+                "label": "Created at",
+                "name": "created_at",
+                "optional": true,
+                "type": "date_time",
+                "parse_output": "date_time_conversion",
+                "render_input": "date_time_conversion"
+              },
+              {
+                "label": "Created by",
+                "name": "created_by",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "number",
+                    "label": "ID",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Login",
+                    "optional": true,
+                    "type": "string",
+                    "name": "login"
+                  },
+                  {
+                    "control_type": "email",
+                    "label": "Email",
+                    "optional": true,
+                    "type": "string",
+                    "name": "email"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "employee_number"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Firstname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "firstname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Lastname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "lastname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Fullname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "fullname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Assignee",
+                    "optional": true,
+                    "type": "string",
+                    "name": "assignee"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "control_type": "text",
+                "hint": "All segments concatenated with a hyphen ( - )",
+                "label": "Code",
+                "name": "code",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "integer",
+                "hint": "Select the required account. Account ID can be found at the end of URL.",
+                "label": "Account ID",
+                "name": "id",
+                "optional": true,
+                "sticky": true,
+                "type": "integer",
+                "parse_output": "integer_conversion"
+              },
+              {
+                "control_type": "text",
+                "label": "Account name",
+                "name": "name",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 1",
+                "name": "segment_1",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 2",
+                "name": "segment_2",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 3",
+                "name": "segment_3",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 4",
+                "name": "segment_4",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 5",
+                "name": "segment_5",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 6",
+                "name": "segment_6",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 7",
+                "name": "segment_7",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 8",
+                "name": "segment_8",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 9",
+                "name": "segment_9",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 10",
+                "name": "segment_10",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 11",
+                "name": "segment_11",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 12",
+                "name": "segment_12",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 13",
+                "name": "segment_13",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 14",
+                "name": "segment_14",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 15",
+                "name": "segment_15",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 16",
+                "name": "segment_16",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 17",
+                "name": "segment_17",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 18",
+                "name": "segment_18",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 19",
+                "name": "segment_19",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 20",
+                "name": "segment_20",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "date_time",
+                "label": "Updated at",
+                "name": "updated_at",
+                "optional": true,
+                "type": "date_time",
+                "parse_output": "date_time_conversion",
+                "render_input": "date_time_conversion"
+              },
+              {
+                "label": "Updated by",
+                "name": "updated_by",
+                "optional": true,
+                "properties": [
+                  {
+                    "control_type": "number",
+                    "label": "ID",
+                    "parse_output": "integer_conversion",
+                    "optional": true,
+                    "type": "integer",
+                    "name": "id"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Login",
+                    "optional": true,
+                    "type": "string",
+                    "name": "login"
+                  },
+                  {
+                    "control_type": "email",
+                    "label": "Email",
+                    "optional": true,
+                    "type": "string",
+                    "name": "email"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee number",
+                    "optional": true,
+                    "type": "string",
+                    "name": "employee_number"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Firstname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "firstname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Lastname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "lastname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Fullname",
+                    "optional": true,
+                    "type": "string",
+                    "name": "fullname"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Assignee",
+                    "optional": true,
+                    "type": "string",
+                    "name": "assignee"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "control_type": "text",
+                "custom": true,
+                "label": "Account type id",
+                "name": "account_type_id",
+                "optional": true,
+                "type": "string"
+              }
+            ],
+            "extended_input_schema": [
+              {
+                "label": "Account type",
+                "name": "account_type",
+                "optional": false,
+                "properties": [
+                  {
+                    "control_type": "select",
+                    "label": "Account type",
+                    "optional": false,
+                    "pick_list": "account_types",
+                    "toggle_hint": "Select from list",
+                    "toggle_field": {
+                      "name": "id",
+                      "label": "Account type ID",
+                      "toggle_hint": "Use custom value",
+                      "control_type": "integer",
+                      "type": "integer"
+                    },
+                    "type": "string",
+                    "name": "id"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "control_type": "checkbox",
+                "label": "Active",
+                "name": "active",
+                "optional": true,
+                "toggle_field": {
+                  "name": "active",
+                  "control_type": "text",
+                  "label": "Active",
+                  "type": "string",
+                  "optional": true,
+                  "hint": "Accepted values are <b>true</b> or <b>false</b>.",
+                  "toggle_hint": "Enter custom value"
+                },
+                "toggle_hint": "Select from list",
+                "type": "number",
+                "parse_output": "float_conversion"
+              },
+              {
+                "control_type": "text",
+                "label": "Account name",
+                "name": "name",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 1",
+                "name": "segment_1",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 2",
+                "name": "segment_2",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 3",
+                "name": "segment_3",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 4",
+                "name": "segment_4",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 5",
+                "name": "segment_5",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 6",
+                "name": "segment_6",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 7",
+                "name": "segment_7",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 8",
+                "name": "segment_8",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 9",
+                "name": "segment_9",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 10",
+                "name": "segment_10",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 11",
+                "name": "segment_11",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 12",
+                "name": "segment_12",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 13",
+                "name": "segment_13",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 14",
+                "name": "segment_14",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 15",
+                "name": "segment_15",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 16",
+                "name": "segment_16",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 17",
+                "name": "segment_17",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 18",
+                "name": "segment_18",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 19",
+                "name": "segment_19",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "hint": "Each segment represents the segment of the account code. E.g. code: 99-9023-100132 where segment-1 is 99, segment-2 is 9023, and segment-3 is 100132.",
+                "label": "Segment 20",
+                "name": "segment_20",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "custom": true,
+                "label": "Account type id",
+                "name": "account_type_id",
+                "optional": true,
+                "type": "string"
+              }
+            ],
+            "visible_config_fields": [
+              "object",
+              "return_object",
+              "account_type_id",
+              "segment_3",
+              "segment_2",
+              "segment_1",
+              "name",
+              "active"
+            ],
+            "uuid": "be44e9fb-957e-409c-9992-173bb7a49f70"
+          },
+          {
+            "number": 6,
+            "as": "7f8bb069",
+            "keyword": "catch",
+            "dynamicPickListSelection": {
+            },
+            "toggleCfg": {
+            },
+            "input": {
+              "max_retry_count": "3",
+              "retry_interval": "2"
+            },
+            "block": [
+
+            ],
+            "uuid": "671ffa51-f3f8-4e18-8d98-f1db34b20e03"
+          }
+        ],
+        "uuid": "d80c2517-6c08-490e-a5a9-b3a0e89323bf"
+      }
+    ],
+    "uuid": "69016389-8a17-47c6-bd43-416b7acf1789"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "clock",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "new_connector_69_connector_374775_1680178467",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "my_second_revolut_account.connection.json",
+        "name": "My second Revolut account",
+        "folder": "",
+        "custom": true
+      }
+    },
+    {
+      "keyword": "application",
+      "provider": "coupa",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "Demo/Coupa/my_coupa_account.connection.json",
+        "name": "My Coupa account",
+        "folder": "Demo/Coupa"
+      }
+    }
+  ]
+}
